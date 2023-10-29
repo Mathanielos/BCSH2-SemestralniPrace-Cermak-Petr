@@ -5,5 +5,5 @@
              mc:Ignorable="d" d:DesignWidth="896" d:DesignHeight="504"
 			 MinWidth="896" MinHeight="504"
              x:Class="BCSH2SemestralniPraceCermakPetr.Views.CountryView">
-	CountryView
+	<Button Command="{Binding $parent[Window].DataContext.ShowCityCommand}">CountryView</Button>
 </UserControl>

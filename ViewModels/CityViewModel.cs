@@ -8,5 +8,6 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
 {
     public class CityViewModel : ViewModelBase
     {
+        public CityViewModel() { }
     }
 }
