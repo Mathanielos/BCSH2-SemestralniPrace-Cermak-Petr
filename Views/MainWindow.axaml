@@ -3,16 +3,14 @@
         xmlns:vm="using:BCSH2SemestralniPraceCermakPetr.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:views="clr-namespace:BCSH2SemestralniPraceCermakPetr.Views"
+        mc:Ignorable="d" d:DesignWidth="896" d:DesignHeight="504"
+			 MinWidth="896" MinHeight="504"
         x:Class="BCSH2SemestralniPraceCermakPetr.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="BCSH2SemestralniPraceCermakPetr">
-
-	<Design.DataContext>
-		<!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-		<vm:MainWindowViewModel/>
-	</Design.DataContext>
+        Title="BCSH2SemestralniPraceCermakPetr"
+		WindowStartupLocation="CenterScreen"
+		Content="{Binding Content}">
 
 </Window>
