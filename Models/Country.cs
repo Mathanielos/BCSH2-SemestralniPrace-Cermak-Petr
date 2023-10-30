@@ -1,4 +1,5 @@
-﻿using BCSH2SemestralniPraceCermakPetr.Models.Enums;
+﻿using Avalonia.Media.Imaging;
+using BCSH2SemestralniPraceCermakPetr.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +14,15 @@ namespace BCSH2SemestralniPraceCermakPetr.Models
         public string Description { get; set; }
         public string Tips { get; set; }
         public List<City> Cities { get; set; }
+        public Bitmap Image { get; set; }
 
-        public Country(CountryName name, string description, string tips, List<City> cities)
+        public Country(CountryName name, string description, string tips, List<City> cities, Bitmap image)
         {
             Name = name;
             Description = description;
             Tips = tips;
             Cities = cities;
+            Image = image;
         }
     }
 }

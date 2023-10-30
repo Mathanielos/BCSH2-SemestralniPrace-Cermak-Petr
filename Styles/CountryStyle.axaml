@@ -7,18 +7,22 @@
 	</Design.PreviewWith>
 
 	<Style Selector="TextBlock">
-		<Setter Property="FontSize" Value="24"/>
 		<Setter Property="TextWrapping" Value="Wrap"/>
-
 		<Setter Property="FontFamily" Value="/Assets/Fonts/Merienda.ttf#Merienda"/>
-		<Setter Property="Foreground" Value="White"/>
+		<Setter Property="Foreground" Value="Black"/>
+		<Setter Property="Effect">
+			<Setter.Value>
+				<DropShadowEffect Color="White" BlurRadius="50"/>
+			</Setter.Value>
+		</Setter>
 	</Style>
 	<Style Selector="Image.BackgroundImage">
-		<Setter Property="Effect" Value="blur(20)"/>
+		<Setter Property="Effect" Value="blur(100)"/>
 		<Setter Property="Stretch" Value="Fill" />
 	</Style>
 	<Style Selector="TextBlock.Title">
 		<Setter Property="FontSize" Value="36"/>
+		<Setter Property="HorizontalAlignment" Value="Center"/>
 	</Style>
 	<Style Selector="StackPanel.City">
 		<Setter Property="Margin" Value="40"/>
@@ -29,8 +33,13 @@
 	<Style Selector="StackPanel.Information">
 		<Setter Property="Margin" Value="40"/>
 	</Style>
-	<Style Selector="StackPanel.Information > TextBlock">
-		<Setter Property="HorizontalAlignment" Value="Center"/>
+	<Style Selector="TextBlock.h2">
+		<Setter Property="FontSize" Value="24"/>
+		<Setter Property="HorizontalAlignment" Value="Left"/>
+	</Style>
+	<Style Selector="TextBlock.paragraph">
+		<Setter Property="FontSize" Value="19"/>
+		<Setter Property="HorizontalAlignment" Value="Left"/>
 	</Style>
 	<Style Selector="Image.CityImage">
 

@@ -29,6 +29,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             var dbPath = Path.Combine(appDirectory, "Assets/TipsToTravel.db");
             databaseService = new DatabaseService(dbPath);
             databaseService.InitializeDatabase();
+
         }
         public ViewModelBase Content
         {
@@ -50,7 +51,8 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                     countryName,
                     countryAttributes["Description"] as string,
                     countryAttributes["Tips"] as string,
-                    new List<City>()
+                    new List<City>(),
+                    ConvertByteArrayToBitmap(countryAttributes["Image"] as byte[])
                 );
 
                 // Fetch city data for the specific country from the database

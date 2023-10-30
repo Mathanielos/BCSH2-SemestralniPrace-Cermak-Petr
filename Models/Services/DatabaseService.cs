@@ -27,25 +27,25 @@ namespace BCSH2SemestralniPraceCermakPetr.Models.Services
                 connection.Open();
 
                 using (SQLiteCommand command = new SQLiteCommand(
-                    "CREATE TABLE IF NOT EXISTS Countries (CountryID INTEGER PRIMARY KEY, Name TEXT NOT NULL, Description TEXT, Tips TEXT);", connection))
+                    "CREATE TABLE IF NOT EXISTS Countries (CountryID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL UNIQUE, Description TEXT, Tips TEXT, Image BLOB);", connection))
                 {
                     command.ExecuteNonQuery();
                 }
 
                 using (SQLiteCommand command = new SQLiteCommand(
-                    "CREATE TABLE IF NOT EXISTS Cities (CityID INTEGER PRIMARY KEY, Name TEXT NOT NULL, CountryID INTEGER, Description TEXT, BasicInformation TEXT, Image BLOB, FOREIGN KEY (CountryID) REFERENCES Countries(CountryID));", connection))
+                    "CREATE TABLE IF NOT EXISTS Cities (CityID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL UNIQUE, CountryID INTEGER, Description TEXT, BasicInformation TEXT, Image BLOB, FOREIGN KEY (CountryID) REFERENCES Countries(CountryID));", connection))
                 {
                     command.ExecuteNonQuery();
                 }
 
                 using (SQLiteCommand command = new SQLiteCommand(
-                    "CREATE TABLE IF NOT EXISTS Places (PlaceID INTEGER PRIMARY KEY, Name TEXT NOT NULL, CityID INTEGER, Category TEXT, Description TEXT, Image BLOB, FOREIGN KEY (CityID) REFERENCES Cities(CityID));", connection))
+                    "CREATE TABLE IF NOT EXISTS Places (PlaceID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL UNIQUE, CityID INTEGER, CategoryID INTEGER, Description TEXT, Image BLOB, FOREIGN KEY (CityID) REFERENCES Cities(CityID), FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID));", connection))
                 {
                     command.ExecuteNonQuery();
                 }
 
                 using (SQLiteCommand command = new SQLiteCommand(
-                    "CREATE TABLE IF NOT EXISTS Categories (CategoryID INTEGER PRIMARY KEY, Name TEXT NOT NULL);", connection))
+                    "CREATE TABLE IF NOT EXISTS Categories (CategoryID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL UNIQUE);", connection))
                 {
                     command.ExecuteNonQuery();
                 }
