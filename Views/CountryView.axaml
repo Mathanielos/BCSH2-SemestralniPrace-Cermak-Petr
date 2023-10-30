@@ -2,7 +2,47 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="896" d:DesignHeight="504"
-             x:Class="BCSH2SemestralniPraceCermakPetr.Views.CountryView">
-	<Button Command="{Binding $parent[Window].DataContext.ShowCityCommand}" Content="{Binding CountryName}"></Button>
+             xmlns:vm="clr-namespace:BCSH2SemestralniPraceCermakPetr.ViewModels"
+			 xmlns:local="clr-namespace:BCSH2SemestralniPraceCermakPetr.Models.Converters"
+			 mc:Ignorable="d" d:DesignWidth="896" d:DesignHeight="504"
+             x:Class="BCSH2SemestralniPraceCermakPetr.Views.CountryView"
+			 x:DataType="vm:CountryViewModel">
+	<UserControl.Resources>
+		<local:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+	</UserControl.Resources>
+	<UserControl.Styles>
+		<StyleInclude Source="/Styles/CountryStyle.axaml"/>
+	</UserControl.Styles>
+
+	<ScrollViewer VerticalScrollBarVisibility="Auto">
+		<Grid>
+			<Image Classes="BackgroundImage" Source="/Assets/Images/spainbackground.jpg">
+			</Image>
+
+			<StackPanel Background="Transparent">
+				<StackPanel Background="Transparent" Classes="Information">
+					<Button Command="{Binding $parent[Window].DataContext.ShowCityCommand}" Content="{Binding ShowingCountry.Name}" Classes="Title"/>
+					<TextBlock Text="{Binding ShowingCountry.Name, Converter={StaticResource EnumDescriptionConverter}}" Classes="Title"/>
+					<TextBlock Text="{Binding ShowingCountry.Description}"/>
+					<TextBlock Text="{Binding ShowingCountry.Tips}"/>
+				</StackPanel>
+				<!-- Use an ItemsControl with a UniformGrid for the cities -->
+				<ItemsControl ItemsSource="{Binding ShowingCountry.Cities}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<UniformGrid Columns="2" />
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Classes="City">
+								<Image Source="{Binding Image}" Classes="CityImage"/>
+								<TextBlock Text="{Binding Description}" TextWrapping="Wrap" FontSize="18"/>
+							</StackPanel>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</StackPanel>
+		</Grid>
+	</ScrollViewer>
 </UserControl>

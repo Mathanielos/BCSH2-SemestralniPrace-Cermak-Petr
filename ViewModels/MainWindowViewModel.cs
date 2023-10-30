@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.ComponentModel;
+using Avalonia.Media.Imaging;
 
 namespace BCSH2SemestralniPraceCermakPetr.ViewModels
 {
@@ -37,8 +38,40 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         private void ShowCountry(CountryName countryName)
         {
             string name = GetDescription(countryName);
-            CountryViewModel viewModel = new CountryViewModel(name);
-            Content = viewModel;
+            // Fetch data for the specific country from the database
+            List<Dictionary<string, object>> countryData = databaseService.GetData("Countries", null, "Name = @Name", new Dictionary<string, object> { { "Name", name } });
+
+            if (countryData.Count > 0)
+            {
+                var countryAttributes = countryData[0]; // Assuming there's only one row for a specific country
+
+                // Create a Country object from the retrieved data
+                Country country = new Country(
+                    countryName,
+                    countryAttributes["Description"] as string,
+                    countryAttributes["Tips"] as string,
+                    new List<City>()
+                );
+
+                // Fetch city data for the specific country from the database
+                List<Dictionary<string, object>> cityData = databaseService.GetData("Cities", null, "CountryID = @CountryID", new Dictionary<string, object> { { "CountryID", countryAttributes["CountryID"] } });
+
+                foreach (var cityAttributes in cityData)
+                {
+                    // Create a City object for each city
+                    City city = new City(
+                        cityAttributes["Name"] as string,
+                        cityAttributes["Description"] as string,
+                        cityAttributes["BasicInformation"] as string,
+                        ConvertByteArrayToBitmap(cityAttributes["Image"] as byte[])
+                    );
+
+                    // Add the City object to the list of cities in the Country
+                    country.Cities.Add(city);
+                }
+                CountryViewModel viewModel = new CountryViewModel(country);
+                Content = viewModel;
+            }
         }
         private void ShowCity()
         {
@@ -61,6 +94,18 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             }
 
             return countryName.ToString(); // Fallback to enum value if no description is found
+        }
+        private Bitmap? ConvertByteArrayToBitmap(byte[] byteArray) // Convert from Byte array to Avalonia Bitmap, so it can be displayed properly
+        {
+            if (byteArray == null || byteArray.Length == 0)
+            {
+                return null;
+            }
+
+            using (var stream = new MemoryStream(byteArray))
+            {
+                return new Bitmap(stream);
+            }
         }
     }
 }

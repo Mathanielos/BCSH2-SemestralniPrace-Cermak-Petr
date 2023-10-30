@@ -1,0 +1,38 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Design.PreviewWith>
+		<Border Padding="20">
+			<!-- Add Controls for Previewer Here -->
+		</Border>
+	</Design.PreviewWith>
+
+	<Style Selector="TextBlock">
+		<Setter Property="FontSize" Value="24"/>
+		<Setter Property="TextWrapping" Value="Wrap"/>
+
+		<Setter Property="FontFamily" Value="/Assets/Fonts/Merienda.ttf#Merienda"/>
+		<Setter Property="Foreground" Value="White"/>
+	</Style>
+	<Style Selector="Image.BackgroundImage">
+		<Setter Property="Effect" Value="blur(20)"/>
+		<Setter Property="Stretch" Value="Fill" />
+	</Style>
+	<Style Selector="TextBlock.Title">
+		<Setter Property="FontSize" Value="36"/>
+	</Style>
+	<Style Selector="StackPanel.City">
+		<Setter Property="Margin" Value="40"/>
+	</Style>
+	<Style Selector="WrapPanel.CityRow">
+		<Setter Property="Orientation" Value="Horizontal"/>
+	</Style>
+	<Style Selector="StackPanel.Information">
+		<Setter Property="Margin" Value="40"/>
+	</Style>
+	<Style Selector="StackPanel.Information > TextBlock">
+		<Setter Property="HorizontalAlignment" Value="Center"/>
+	</Style>
+	<Style Selector="Image.CityImage">
+
+	</Style>
+</Styles>
