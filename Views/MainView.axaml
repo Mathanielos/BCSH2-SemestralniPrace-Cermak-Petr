@@ -2,8 +2,65 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="896" d:DesignHeight="504"
-			 MinWidth="896" MinHeight="504"
-             x:Class="BCSH2SemestralniPraceCermakPetr.Views.MainView">
-	<Button Command="{Binding $parent[Window].DataContext.ShowCountryCommand}">MainView</Button>
+             xmlns:vm="clr-namespace:BCSH2SemestralniPraceCermakPetr.ViewModels"
+			 mc:Ignorable="d" d:DesignWidth="896" d:DesignHeight="504"
+             x:Class="BCSH2SemestralniPraceCermakPetr.Views.MainView"
+	         x:DataType="vm:MainViewModel"
+			 xmlns:sys="clr-namespace:BCSH2SemestralniPraceCermakPetr.Models.Enums">
+	<UserControl.Styles>
+		<StyleInclude Source="/Styles/MainStyle.axaml"/>
+	</UserControl.Styles>
+	<Grid>
+		<!-- Row for each banner image -->
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<!-- First banner image -->
+		<Button Grid.Row="0" Command="{Binding $parent[Window].DataContext.ShowCountryCommand}">
+			<Button.CommandParameter>
+				<sys:CountryName>Spain</sys:CountryName>
+			</Button.CommandParameter>
+			<Grid Classes="banner">
+				<Image Classes="bannerImage" Source="/Assets/Images/spain.jpg"></Image>
+				<TextBlock Classes="h1" Text="Španělsko"/>
+			</Grid>
+		</Button>
+
+		<!-- Second banner image -->
+		<Button Grid.Row="1" Command="{Binding $parent[Window].DataContext.ShowCountryCommand}">
+			<Button.CommandParameter>
+				<sys:CountryName>Italy</sys:CountryName>
+			</Button.CommandParameter>
+			<Grid Classes="banner">
+				<Image Classes="bannerImage" Source="/Assets/Images/italy.jpg"></Image>
+				<TextBlock Classes="h1" Text="Itálie"/>
+			</Grid>
+		</Button>
+
+		<!-- Third banner image -->
+		<Button Grid.Row="2" Command="{Binding $parent[Window].DataContext.ShowCountryCommand}">
+			<Button.CommandParameter>
+				<sys:CountryName>Greece</sys:CountryName>
+			</Button.CommandParameter>
+			<Grid Classes="banner">
+				<Image Classes="bannerImage" Source="/Assets/Images/greece.jpg"></Image>
+				<TextBlock Classes="h1" Text="Řecko"/>
+			</Grid>
+		</Button>
+
+		<!-- Fourth banner image -->
+		<Button Grid.Row="3" Command="{Binding $parent[Window].DataContext.ShowCountryCommand}">
+			<Button.CommandParameter>
+				<sys:CountryName>Finland</sys:CountryName>
+			</Button.CommandParameter>
+			<Grid Classes="banner">
+				<Image Classes="bannerImage" Source="/Assets/Images/finland.jpg"></Image>
+				<TextBlock Classes="h1" Text="Finsko"/>
+			</Grid>
+		</Button>
+	</Grid>
 </UserControl>
