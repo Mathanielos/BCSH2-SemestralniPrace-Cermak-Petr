@@ -1,0 +1,34 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:BCSH2SemestralniPraceCermakPetr.Views">
+	<Design.PreviewWith>
+		<controls:ToolTemplateView />
+	</Design.PreviewWith>
+
+	<Style Selector="controls|ToolTemplateView">
+		<!-- Set Defaults -->
+		<Setter Property="Template">
+			<ControlTemplate>
+				<StackPanel Orientation="Horizontal">
+					<Button Command="{Binding $parent[Window].DataContext.ReturnHomeCommand}" Classes="ButtonToolTip">
+						<ToolTip.Tip>
+							<StackPanel>
+								<TextBlock Classes="tooltip">Návrat do hlavního menu</TextBlock>
+							</StackPanel>
+						</ToolTip.Tip>
+						<Image Source="/Assets/Icons/home.ico"/>
+					</Button>
+
+					<Button Command="{Binding $parent[Window].DataContext.ReturnBackCommand}" Classes="ButtonToolTip">
+						<ToolTip.Tip>
+							<StackPanel>
+								<TextBlock Classes="tooltip">Zpět</TextBlock>
+							</StackPanel>
+						</ToolTip.Tip>
+						<Image Source="/Assets/Icons/return.ico"/>
+					</Button>
+				</StackPanel>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+</Styles>

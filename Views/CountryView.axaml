@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BCSH2SemestralniPraceCermakPetr.ViewModels"
 			 xmlns:local="clr-namespace:BCSH2SemestralniPraceCermakPetr.Models.Converters"
+			 xmlns:controls="clr-namespace:BCSH2SemestralniPraceCermakPetr.Views"
 			 mc:Ignorable="d" d:DesignWidth="896" d:DesignHeight="504"
              x:Class="BCSH2SemestralniPraceCermakPetr.Views.CountryView"
 			 x:DataType="vm:CountryViewModel">
@@ -13,17 +14,15 @@
 		<local:RemainingTextConverter x:Key="RemainingTextConverter" />
 	</UserControl.Resources>
 	<UserControl.Styles>
-		<StyleInclude Source="/Styles/CountryStyle.axaml"/>
+		<StyleInclude Source="/Styles/CountryCityStyle.axaml"/>
 	</UserControl.Styles>
 
 	<ScrollViewer VerticalScrollBarVisibility="Auto">
 		<Grid>
-			<Image Classes="BackgroundImage" Source="{Binding ShowingCountry.Image}">
-			</Image>
-
-			<StackPanel Background="Transparent">
-				<StackPanel Background="Transparent" Classes="Information">
-					<Button Command="{Binding $parent[Window].DataContext.ShowCityCommand}" Content="{Binding ShowingCountry.Name}" Classes="Title"/>
+			<Image Classes="BackgroundImage" Source="{Binding ShowingCountry.Image}"/>
+			<StackPanel>
+				<controls:ToolTemplateView></controls:ToolTemplateView>
+				<StackPanel Classes="Information">
 					<TextBlock Text="{Binding ShowingCountry.Name, Converter={StaticResource EnumDescriptionConverter}}" Classes="Title"/>
 					<TextBlock Text="{Binding ShowingCountry.Description, Converter={StaticResource FirstTwoWordsConverter}}" Classes="h2"/>
 					<TextBlock Text="{Binding ShowingCountry.Description, Converter={StaticResource RemainingTextConverter}}" Margin="50,0,0,0" Classes="paragraph"/>
@@ -39,9 +38,13 @@
 					</ItemsControl.ItemsPanel>
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
-							<StackPanel Classes="City">
-								<Image Source="{Binding Image}" Classes="CityImage"/>
-								<TextBlock Text="{Binding Description}" Classes="paragraph"/>
+							<StackPanel Classes="Item">
+								<Button Command="{Binding $parent[Window].DataContext.ShowCityCommand}" CommandParameter="{Binding}">
+									<StackPanel>
+										<Image Source="{Binding Image}" Classes="ItemImage"/>
+										<TextBlock Text="{Binding Description}" Classes="paragraph"/>
+									</StackPanel>
+								</Button>
 							</StackPanel>
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>

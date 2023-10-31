@@ -15,21 +15,26 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
     {
         private readonly DatabaseService databaseService;
         private ViewModelBase content;
+        private Stack<ViewModelBase> viewStack; // A stack to keep track of the views
         public ReactiveCommand<CountryName, Unit> ShowCountryCommand { get; } //These 3 commands are here so views can be easily switched without issues.
-        public ReactiveCommand<Unit, Unit> ShowCityCommand { get; }
-        public ReactiveCommand<Unit, Unit> ShowPlaceCommand { get; }
+        public ReactiveCommand<City, Unit> ShowCityCommand { get; }
+        public ReactiveCommand<Place, Unit> ShowPlaceCommand { get; }
+        public ReactiveCommand<Unit, Unit> ReturnBackCommand { get; }
+        public ReactiveCommand<Unit, Unit> ReturnHomeCommand { get; }
 
         public MainWindowViewModel()
         {
             content = new MainViewModel();
+            viewStack = new Stack<ViewModelBase>();
             ShowCountryCommand = ReactiveCommand.Create<CountryName>(ShowCountry);
-            ShowCityCommand = ReactiveCommand.Create(ShowCity);
-            ShowPlaceCommand = ReactiveCommand.Create(ShowPlace);
+            ShowCityCommand = ReactiveCommand.Create<City>(ShowCity);
+            ShowPlaceCommand = ReactiveCommand.Create<Place>(ShowPlace);
+            ReturnBackCommand = ReactiveCommand.Create(ReturnBack);
+            ReturnHomeCommand = ReactiveCommand.Create(ReturnHome);
             var appDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var dbPath = Path.Combine(appDirectory, "Assets/TipsToTravel.db");
             databaseService = new DatabaseService(dbPath);
             databaseService.InitializeDatabase();
-
         }
         public ViewModelBase Content
         {
@@ -39,6 +44,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         private void ShowCountry(CountryName countryName)
         {
             string name = GetDescription(countryName);
+
             // Fetch data for the specific country from the database
             List<Dictionary<string, object>> countryData = databaseService.GetData("Countries", null, "Name = @Name", new Dictionary<string, object> { { "Name", name } });
 
@@ -65,25 +71,65 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                         cityAttributes["Name"] as string,
                         cityAttributes["Description"] as string,
                         cityAttributes["BasicInformation"] as string,
+                        new List<Place>(), // Initialize an empty list of places for the city
                         ConvertByteArrayToBitmap(cityAttributes["Image"] as byte[])
                     );
+
+                    // Fetch place data for the specific city from the database
+                    List<Dictionary<string, object>> placeData = databaseService.GetData("Places", null, "CityID = @CityID", new Dictionary<string, object> { { "CityID", cityAttributes["CityID"] } });
+
+                    foreach (var placeAttributes in placeData)
+                    {
+                        // Create a Place object for each place
+                        Place place = new Place(
+                            placeAttributes["Name"] as string,
+                            placeAttributes["Description"] as string,
+                            ConvertByteArrayToBitmap(placeAttributes["Image"] as byte[])
+                        );
+
+                        // Add the Place object to the list of places in the City
+                        city.Places.Add(place);
+                    }
 
                     // Add the City object to the list of cities in the Country
                     country.Cities.Add(city);
                 }
+
                 CountryViewModel viewModel = new CountryViewModel(country);
+
+                viewStack.Push(content);
+
                 Content = viewModel;
             }
         }
-        private void ShowCity()
+
+        private void ShowCity(City city)
         {
-            CityViewModel viewModel = new CityViewModel();
+            CityViewModel viewModel = new CityViewModel(city);
+            viewStack.Push(content);
             Content = viewModel;
         }
-        private void ShowPlace()
+        private void ShowPlace(Place place)
         {
-            PlaceViewModel viewModel = new PlaceViewModel();
+            PlaceViewModel viewModel = new PlaceViewModel(place);
+            viewStack.Push(content);
             Content = viewModel;
+        }
+        private void ReturnBack()
+        {
+            if (viewStack.Count > 0)
+            {
+                // Pop the previous view model from the stack
+                ViewModelBase previousView = viewStack.Pop();
+
+                // Set the previous view as the current view
+                Content = previousView;
+            }
+        }
+        private void ReturnHome()
+        {
+            Content = new MainViewModel();
+            viewStack.Clear();
         }
         private string GetDescription(CountryName countryName)
         {

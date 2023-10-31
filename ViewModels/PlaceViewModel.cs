@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BCSH2SemestralniPraceCermakPetr.Models;
+using ReactiveUI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +10,15 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
 {
     public class PlaceViewModel : ViewModelBase
     {
-        public PlaceViewModel() { }
+        private Place showingPlace;
+        public Place ShowingPlace
+        {
+            get => showingPlace;
+            private set => this.RaiseAndSetIfChanged(ref showingPlace, value);
+        }
+        public PlaceViewModel(Place place)
+        {
+            ShowingPlace = place;
+        }
     }
 }

@@ -18,7 +18,7 @@ build_property.ProjectDir = C:\Users\petrc\Documents\GitHub\BCSH2-SemestralniPra
 [C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Styles/CountryStyle.axaml]
+[C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Styles/CountryCityStyle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Styles/MainStyle.axaml]
@@ -37,4 +37,7 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Views/PlaceView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Views/ToolTemplateView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

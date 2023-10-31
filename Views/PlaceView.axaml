@@ -3,8 +3,31 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BCSH2SemestralniPraceCermakPetr.ViewModels"
+			 xmlns:controls="clr-namespace:BCSH2SemestralniPraceCermakPetr.Views"
 			 mc:Ignorable="d" d:DesignWidth="896" d:DesignHeight="504"
              x:Class="BCSH2SemestralniPraceCermakPetr.Views.PlaceView"
 			 x:DataType="vm:PlaceViewModel">
-	PlaceView
+	<UserControl.Styles>
+		<StyleInclude Source="/Styles/CountryCityStyle.axaml"/>
+	</UserControl.Styles>
+
+	<ScrollViewer VerticalScrollBarVisibility="Auto">
+		<Grid>
+			<Image Classes="BackgroundImage" Source="{Binding ShowingPlace.Image}">
+			</Image>
+
+			<StackPanel>
+				<controls:ToolTemplateView></controls:ToolTemplateView>
+				<StackPanel>
+					<StackPanel.Children>
+						<StackPanel Classes="Item" MaxWidth="600" Cursor="Arrow">
+							<TextBlock Text="{Binding ShowingPlace.Name}" Classes="Title"/>
+							<Image Source="{Binding ShowingPlace.Image}" Classes="ItemImage" />
+							<TextBlock Text="{Binding ShowingPlace.Description}" Classes="paragraph" />
+						</StackPanel>
+					</StackPanel.Children>
+				</StackPanel>
+			</StackPanel>
+		</Grid>
+	</ScrollViewer>
 </UserControl>

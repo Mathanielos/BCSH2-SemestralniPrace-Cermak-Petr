@@ -3,8 +3,55 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BCSH2SemestralniPraceCermakPetr.ViewModels"
+			 xmlns:local="clr-namespace:BCSH2SemestralniPraceCermakPetr.Models.Converters"
+			 xmlns:controls="clr-namespace:BCSH2SemestralniPraceCermakPetr.Views"
 			 mc:Ignorable="d" d:DesignWidth="896" d:DesignHeight="504"
              x:Class="BCSH2SemestralniPraceCermakPetr.Views.CityView"
 			 x:DataType="vm:CityViewModel">
-	<Button Command="{Binding $parent[Window].DataContext.ShowPlaceCommand}">CityView</Button>
+	<UserControl.Resources>
+		<local:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+		<local:FirstTwoWordsConverter x:Key="FirstTwoWordsConverter" />
+		<local:RemainingTextConverter x:Key="RemainingTextConverter" />
+	</UserControl.Resources>
+	<UserControl.Styles>
+		<StyleInclude Source="/Styles/CountryCityStyle.axaml"/>
+	</UserControl.Styles>
+
+	<ScrollViewer VerticalScrollBarVisibility="Auto">
+		<Grid>
+			<Image Classes="BackgroundImage" Source="{Binding ShowingCity.Image}">
+			</Image>
+
+			<StackPanel>
+				<controls:ToolTemplateView></controls:ToolTemplateView>
+				<StackPanel Classes="Information">
+					<TextBlock Text="{Binding ShowingCity.Name, Converter={StaticResource EnumDescriptionConverter}}" Classes="Title"/>
+					<TextBlock Text="{Binding ShowingCity.Description, Converter={StaticResource FirstTwoWordsConverter}}" Classes="h2"/>
+					<TextBlock Text="{Binding ShowingCity.Description, Converter={StaticResource RemainingTextConverter}}" Margin="50,0,0,0" Classes="paragraph"/>
+					<TextBlock Text="&#10;Základní informace" Classes="h2" />
+					<TextBlock Text="{Binding ShowingCity.BasicInformation}" Margin="50,0,0,0" Classes="paragraph" />
+				</StackPanel>
+				<!-- Use an ItemsControl with a UniformGrid for the places -->
+				<ItemsControl ItemsSource="{Binding ShowingCity.Places}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<UniformGrid Columns="2" />
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Classes="Item">
+								<Button Command="{Binding $parent[Window].DataContext.ShowPlaceCommand}" CommandParameter="{Binding}">
+									<StackPanel>
+										<Image Source="{Binding Image}" Classes="ItemImage"/>
+										<TextBlock Text="{Binding Description}" Classes="paragraph"/>
+									</StackPanel>
+								</Button>
+							</StackPanel>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</StackPanel>
+		</Grid>
+	</ScrollViewer>
 </UserControl>
