@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace BCSH2SemestralniPraceCermakPetr.Models.Converters
 {
@@ -14,9 +13,9 @@ namespace BCSH2SemestralniPraceCermakPetr.Models.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is CountryName country)
+            if (value != null && value.GetType().IsEnum)
             {
-                var fieldInfo = country.GetType().GetField(country.ToString());
+                var fieldInfo = value.GetType().GetField(value.ToString());
                 var descriptionAttributes = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
 
                 if (descriptionAttributes.Length > 0)
@@ -25,12 +24,27 @@ namespace BCSH2SemestralniPraceCermakPetr.Models.Converters
                 }
             }
 
-            return value.ToString();
+            return value?.ToString() ?? string.Empty;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            if (value is string description && targetType.IsEnum)
+            {
+                var enumType = targetType;
+                foreach (var field in enumType.GetFields())
+                {
+                    var descriptionAttribute = (DescriptionAttribute)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
+
+                    if (descriptionAttribute != null && descriptionAttribute.Description == description)
+                    {
+                        return field.GetValue(null); // Found the matching enum value
+                    }
+                }
+            }
+
+            // If no match is found
+            throw new ArgumentException("Invalid description");
         }
     }
 }

@@ -16,6 +16,10 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
+	<Style Selector="ComboBox TextBlock">
+		<Setter Property="Foreground" Value="White"/>
+		<Setter Property="Effect" Value="{x:Null}"/>
+	</Style>
 	<Style Selector="Image.BackgroundImage">
 		<Setter Property="Effect" Value="blur(100)"/>
 		<Setter Property="Stretch" Value="Fill" />

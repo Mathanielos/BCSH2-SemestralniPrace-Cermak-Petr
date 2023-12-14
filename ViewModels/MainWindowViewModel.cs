@@ -84,7 +84,8 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                         Place place = new Place(
                             placeAttributes["Name"] as string,
                             placeAttributes["Description"] as string,
-                            ConvertByteArrayToBitmap(placeAttributes["Image"] as byte[])
+                            ConvertByteArrayToBitmap(placeAttributes["Image"] as byte[]),
+                            (Category)Enum.Parse(typeof(Category), placeAttributes["CategoryID"].ToString())
                         );
 
                         // Add the Place object to the list of places in the City
