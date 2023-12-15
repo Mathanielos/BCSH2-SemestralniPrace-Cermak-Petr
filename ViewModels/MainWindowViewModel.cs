@@ -16,11 +16,29 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         private readonly DatabaseService databaseService;
         private ViewModelBase content;
         private Stack<ViewModelBase> viewStack; // A stack to keep track of the views
-        public ReactiveCommand<CountryName, Unit> ShowCountryCommand { get; } //These 3 commands are here so views can be easily switched without issues.
+        public ReactiveCommand<CountryName, Unit> ShowCountryCommand { get; } //This and next 2 commands are here so views can be easily switched without issues.
         public ReactiveCommand<City, Unit> ShowCityCommand { get; }
         public ReactiveCommand<Place, Unit> ShowPlaceCommand { get; }
         public ReactiveCommand<Unit, Unit> ReturnBackCommand { get; }
         public ReactiveCommand<Unit, Unit> ReturnHomeCommand { get; }
+        public ReactiveCommand<Unit, Unit> InsertCommand { get; } // Insert button in the menu at the top
+        public ReactiveCommand<Unit, Unit> EditCommand { get; } // Edit button in the menu at the top
+        public ReactiveCommand<Unit, Unit> DeleteCommand { get; } // Delete button in the menu at the top
+        public ReactiveCommand<object, Unit> EditDataCommand { get; } // Editation of the object
+        public ReactiveCommand<object, Unit> DeleteDataCommand { get; } // Deletion of the object
+        private bool isEditButtonVisible;
+        private bool isDeleteButtonVisible;
+
+        public bool IsEditButtonVisible
+        {
+            get => isEditButtonVisible;
+            set => this.RaiseAndSetIfChanged(ref isEditButtonVisible, value);
+        }
+        public bool IsDeleteButtonVisible
+        {
+            get => isDeleteButtonVisible;
+            set => this.RaiseAndSetIfChanged(ref isDeleteButtonVisible, value);
+        }
 
         public MainWindowViewModel()
         {
@@ -31,10 +49,17 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             ShowPlaceCommand = ReactiveCommand.Create<Place>(ShowPlace);
             ReturnBackCommand = ReactiveCommand.Create(ReturnBack);
             ReturnHomeCommand = ReactiveCommand.Create(ReturnHome);
+            InsertCommand = ReactiveCommand.Create(Insert);
+            EditCommand = ReactiveCommand.Create(Edit);
+            DeleteCommand = ReactiveCommand.Create(Delete);
+            EditDataCommand = ReactiveCommand.Create<object>(EditData);
+            DeleteDataCommand = ReactiveCommand.Create<object>(DeleteData);
             var appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            var dbPath = Path.Combine(appDirectory, "Assets/TipsToTravel.db");
+            var dbPath = Path.Combine(appDirectory, "Assets/TipsToTravelChanges.db");
             databaseService = new DatabaseService(dbPath);
             databaseService.InitializeDatabase();
+            IsEditButtonVisible = false;
+            IsDeleteButtonVisible = false;
         }
         public ViewModelBase Content
         {
@@ -53,7 +78,8 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                 var countryAttributes = countryData[0]; // Assuming there's only one row for a specific country
 
                 // Create a Country object from the retrieved data
-                Country country = new Country(
+                Country country = new(
+                    Convert.ToInt32(countryAttributes["CountryID"]),
                     countryName,
                     countryAttributes["Description"] as string,
                     countryAttributes["Tips"] as string,
@@ -68,6 +94,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                 {
                     // Create a City object for each city
                     City city = new City(
+                        Convert.ToInt32(cityAttributes["CityID"]),
                         cityAttributes["Name"] as string,
                         cityAttributes["Description"] as string,
                         cityAttributes["BasicInformation"] as string,
@@ -82,6 +109,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                     {
                         // Create a Place object for each place
                         Place place = new Place(
+                            Convert.ToInt32(placeAttributes["PlaceID"]),
                             placeAttributes["Name"] as string,
                             placeAttributes["Description"] as string,
                             ConvertByteArrayToBitmap(placeAttributes["Image"] as byte[]),
@@ -97,7 +125,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                 }
 
                 CountryViewModel viewModel = new CountryViewModel(country);
-
+                viewModel.SetParent(content);
                 viewStack.Push(content);
 
                 Content = viewModel;
@@ -107,12 +135,14 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         private void ShowCity(City city)
         {
             CityViewModel viewModel = new CityViewModel(city);
+            viewModel.SetParent(content);
             viewStack.Push(content);
             Content = viewModel;
         }
         private void ShowPlace(Place place)
         {
             PlaceViewModel viewModel = new PlaceViewModel(place);
+            viewModel.SetParent(content);
             viewStack.Push(content);
             Content = viewModel;
         }
@@ -131,6 +161,64 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         {
             Content = new MainViewModel();
             viewStack.Clear();
+        }
+        private void Insert()
+        {
+
+        }
+        private void Edit()
+        {
+            IsEditButtonVisible = true;
+            IsDeleteButtonVisible = false;
+        }
+        private void Delete()
+        {
+            IsEditButtonVisible = false;
+            IsDeleteButtonVisible = true;
+        }
+        private void EditData(object parameter)
+        {
+            if (parameter is Place place)
+            {
+
+            }
+            else if (parameter is Country country)
+            {
+
+            }
+            else if (parameter is City city)
+            {
+
+            }
+        }
+        private void DeleteData(object parameter)
+        {
+            if (parameter is Place place)
+            {
+                databaseService.DeleteData(place);
+
+                Content?.RemovePlace(place);
+                if (Content is PlaceViewModel placeViewModel)
+                {
+                    ReturnBack();
+                }
+            }
+
+            else if (parameter is Country country)
+            {
+                databaseService.DeleteData(country);
+                ReturnBack();
+            }
+            else if (parameter is City city)
+            {
+                databaseService.DeleteData(city);
+
+                Content?.RemoveCity(city);
+                if (Content is CityViewModel cityViewModel)
+                {
+                    ReturnBack();
+                }
+            }
         }
         private string GetDescription(CountryName countryName)
         {

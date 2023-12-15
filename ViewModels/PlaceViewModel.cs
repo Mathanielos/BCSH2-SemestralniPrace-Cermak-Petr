@@ -20,5 +20,9 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         {
             ShowingPlace = place;
         }
+        public override void RemovePlace(Place place)
+        {
+            Parent?.RemovePlace(place);
+        }
     }
 }

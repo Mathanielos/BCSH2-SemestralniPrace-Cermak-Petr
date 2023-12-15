@@ -1,0 +1,49 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:BCSH2SemestralniPraceCermakPetr.Views">
+	<Design.PreviewWith>
+		<controls:ToolTemplateView />
+	</Design.PreviewWith>
+
+	<Style Selector="controls|ToolTemplateViewWithoutInsert">
+		<!-- Set Defaults -->
+		<Setter Property="Template">
+			<ControlTemplate>
+				<StackPanel Orientation="Horizontal">
+					<Button Command="{Binding $parent[Window].DataContext.ReturnHomeCommand}" Classes="ButtonToolTip">
+						<ToolTip.Tip>
+							<StackPanel>
+								<TextBlock Classes="tooltip">Návrat do hlavního menu</TextBlock>
+							</StackPanel>
+						</ToolTip.Tip>
+						<Image Source="/Assets/Icons/home.ico"/>
+					</Button>
+					<Button Command="{Binding $parent[Window].DataContext.ReturnBackCommand}" Classes="ButtonToolTip">
+						<ToolTip.Tip>
+							<StackPanel>
+								<TextBlock Classes="tooltip">Zpět</TextBlock>
+							</StackPanel>
+						</ToolTip.Tip>
+						<Image Source="/Assets/Icons/return.ico"/>
+					</Button>
+					<Button Command="{Binding $parent[Window].DataContext.EditCommand}" Classes="ButtonToolTip">
+						<ToolTip.Tip>
+							<StackPanel>
+								<TextBlock Classes="tooltip">Úpravy</TextBlock>
+							</StackPanel>
+						</ToolTip.Tip>
+						<Image Source="/Assets/Icons/edit.ico"/>
+					</Button>
+					<Button Command="{Binding $parent[Window].DataContext.DeleteCommand}" Classes="ButtonToolTip">
+						<ToolTip.Tip>
+							<StackPanel>
+								<TextBlock Classes="tooltip">Mazání</TextBlock>
+							</StackPanel>
+						</ToolTip.Tip>
+						<Image Source="/Assets/Icons/delete.ico"/>
+					</Button>
+				</StackPanel>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+</Styles>

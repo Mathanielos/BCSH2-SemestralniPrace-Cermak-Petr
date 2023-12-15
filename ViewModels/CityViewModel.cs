@@ -4,6 +4,7 @@ using DynamicData;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -14,7 +15,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
     public class CityViewModel : ViewModelBase
     {
         private City showingCity;
-        private List<Place> places;
+        private ObservableCollection<Place> places;
         private Category selectedCategory;
         public Category[] Categories
         {
@@ -43,26 +44,42 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                 ComboBoxSelectionChanged();
             }
         }
-        public List<Place> Places
+        public ObservableCollection<Place> Places
         {
             get => places;
-            private set => this.RaiseAndSetIfChanged(ref places, value);
+            set => this.RaiseAndSetIfChanged(ref places, value);
         }
         public CityViewModel(City city)
         {
             ShowingCity = city;
-            places = city.Places;
+            places = new ObservableCollection<Place>(city.Places);
         }
         private void ComboBoxSelectionChanged()
         {
             if (SelectedCategory == Category.VsechnaMista)
             {
-                Places = ShowingCity.Places;
+                Places = new ObservableCollection<Place>(ShowingCity.Places);
             }
             else
             {
-                Places = ShowingCity.Places.Where(place => place.Category == SelectedCategory).ToList();
+                Places = new ObservableCollection<Place>(
+                    ShowingCity.Places.Where(place => place.Category == SelectedCategory)
+                );
             }
+        }
+
+        public override void RemovePlace(Place place)
+        {
+            if (Places.Remove(place))
+            {
+                this.RaisePropertyChanged(nameof(Places));
+            }
+
+            Parent?.RemovePlace(place);
+        }
+        public override void RemoveCity(City city)
+        {
+            Parent?.RemoveCity(city);
         }
     }
 }

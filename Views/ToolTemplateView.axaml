@@ -18,7 +18,6 @@
 						</ToolTip.Tip>
 						<Image Source="/Assets/Icons/home.ico"/>
 					</Button>
-
 					<Button Command="{Binding $parent[Window].DataContext.ReturnBackCommand}" Classes="ButtonToolTip">
 						<ToolTip.Tip>
 							<StackPanel>
@@ -26,6 +25,30 @@
 							</StackPanel>
 						</ToolTip.Tip>
 						<Image Source="/Assets/Icons/return.ico"/>
+					</Button>
+					<Button Command="{Binding $parent[Window].DataContext.InsertCommand}" Classes="ButtonToolTip">
+						<ToolTip.Tip>
+							<StackPanel>
+								<TextBlock Classes="tooltip">Vložení</TextBlock>
+							</StackPanel>
+						</ToolTip.Tip>
+						<Image Source="/Assets/Icons/add.ico"/>
+					</Button>
+					<Button Command="{Binding $parent[Window].DataContext.EditCommand}" Classes="ButtonToolTip">
+						<ToolTip.Tip>
+							<StackPanel>
+								<TextBlock Classes="tooltip">Úpravy</TextBlock>
+							</StackPanel>
+						</ToolTip.Tip>
+						<Image Source="/Assets/Icons/edit.ico"/>
+					</Button>
+					<Button Command="{Binding $parent[Window].DataContext.DeleteCommand}" Classes="ButtonToolTip">
+						<ToolTip.Tip>
+							<StackPanel>
+								<TextBlock Classes="tooltip">Mazání</TextBlock>
+							</StackPanel>
+						</ToolTip.Tip>
+						<Image Source="/Assets/Icons/delete.ico"/>
 					</Button>
 				</StackPanel>
 			</ControlTemplate>

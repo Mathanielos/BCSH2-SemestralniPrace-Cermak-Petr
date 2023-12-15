@@ -17,11 +17,17 @@
 			</Image>
 
 			<StackPanel>
-				<controls:ToolTemplateView></controls:ToolTemplateView>
+				<controls:ToolTemplateViewWithoutInsert></controls:ToolTemplateViewWithoutInsert>
 				<StackPanel>
 					<StackPanel.Children>
 						<StackPanel Classes="Item" MaxWidth="600" Cursor="Arrow">
 							<TextBlock Text="{Binding ShowingPlace.Name}" Classes="Title"/>
+							<Button IsVisible="{Binding $parent[Window].DataContext.IsEditButtonVisible}" Command="{Binding $parent[Window].DataContext.EditDataCommand}" CommandParameter="{Binding ShowingPlace}" VerticalAlignment="Center" HorizontalAlignment="Center">
+								<TextBlock Text="Editovat místo" />
+							</Button>
+							<Button IsVisible="{Binding $parent[Window].DataContext.IsDeleteButtonVisible}" Command="{Binding $parent[Window].DataContext.DeleteDataCommand}" CommandParameter="{Binding ShowingPlace}" VerticalAlignment="Center" HorizontalAlignment="Center">
+								<TextBlock Text="Smazat místo" />
+							</Button>
 							<Image Source="{Binding ShowingPlace.Image}" Classes="ItemImage" />
 							<TextBlock Text="{Binding ShowingPlace.Description}" Classes="paragraph" />
 						</StackPanel>
