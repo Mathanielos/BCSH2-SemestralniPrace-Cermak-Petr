@@ -11,13 +11,23 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         {
             Parent = parent;
         }
-
         public virtual void RemovePlace(Place place)
         {
 
         }
-
         public virtual void RemoveCity(City city)
+        {
+
+        }
+        public virtual void UpdatePlace(Place place)
+        {
+
+        }
+        public virtual void UpdateCity(City city)
+        {
+
+        }
+        public virtual void UpdateCountry(Country country)
         {
 
         }

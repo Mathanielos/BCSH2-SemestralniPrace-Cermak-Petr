@@ -30,6 +30,9 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 [C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Views/CountryView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Views/EditWindow.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Views/MainView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 

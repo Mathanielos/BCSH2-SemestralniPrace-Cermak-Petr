@@ -26,7 +26,15 @@
 						</ToolTip.Tip>
 						<Image Source="/Assets/Icons/return.ico"/>
 					</Button>
-					<Button Command="{Binding $parent[Window].DataContext.EditCommand}" Classes="ButtonToolTip">
+					<Button Command="{Binding $parent[Window].DataContext.SelectCommand}" IsEnabled="{Binding $parent[Window].DataContext.IsNotSelecting}" Classes="ButtonToolTip">
+						<ToolTip.Tip>
+							<StackPanel>
+								<TextBlock Classes="tooltip">Klasické zobrazení</TextBlock>
+							</StackPanel>
+						</ToolTip.Tip>
+						<Image Source="/Assets/Icons/select.ico"/>
+					</Button>
+					<Button Command="{Binding $parent[Window].DataContext.EditCommand}" IsEnabled="{Binding $parent[Window].DataContext.IsNotEditing}" Classes="ButtonToolTip">
 						<ToolTip.Tip>
 							<StackPanel>
 								<TextBlock Classes="tooltip">Úpravy</TextBlock>
@@ -34,7 +42,7 @@
 						</ToolTip.Tip>
 						<Image Source="/Assets/Icons/edit.ico"/>
 					</Button>
-					<Button Command="{Binding $parent[Window].DataContext.DeleteCommand}" Classes="ButtonToolTip">
+					<Button Command="{Binding $parent[Window].DataContext.DeleteCommand}" IsEnabled="{Binding $parent[Window].DataContext.IsNotDeleting}" Classes="ButtonToolTip">
 						<ToolTip.Tip>
 							<StackPanel>
 								<TextBlock Classes="tooltip">Mazání</TextBlock>

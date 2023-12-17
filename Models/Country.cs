@@ -14,12 +14,16 @@ namespace BCSH2SemestralniPraceCermakPetr.Models
     public class Country
     {
         [Key]
-        [Column("CountryId")]
+        [Column("CountryID")]
         public int Id { get; set; }
+        [Column("Name")]
         public CountryName Name { get; set; }
+        [Column("Description")]
         public string Description { get; set; }
+        [Column("Tips")]
         public string Tips { get; set; }
         public List<City> Cities { get; set; }
+        [Column("Image")]
         public Bitmap Image { get; set; }
 
         public Country(int id, CountryName name, string description, string tips, List<City> cities, Bitmap image)

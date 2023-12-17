@@ -6,6 +6,11 @@ using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Drawing.Imaging;
+using Avalonia.Media.Imaging;
+using BCSH2SemestralniPraceCermakPetr.Models.Converters;
+using System.Globalization;
+using BCSH2SemestralniPraceCermakPetr.Models.Enums;
 
 namespace BCSH2SemestralniPraceCermakPetr.Models.Services
 {
@@ -37,13 +42,13 @@ namespace BCSH2SemestralniPraceCermakPetr.Models.Services
                 }
 
                 using (SQLiteCommand command = new SQLiteCommand(
-                    "CREATE TABLE IF NOT EXISTS Cities (CityID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL UNIQUE, CountryID INTEGER, Description TEXT, BasicInformation TEXT, Image BLOB, FOREIGN KEY (CountryID) REFERENCES Countries(CountryID));", connection))
+                    "CREATE TABLE IF NOT EXISTS Cities (CityID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, CountryID INTEGER, Description TEXT, BasicInformation TEXT, Image BLOB, FOREIGN KEY (CountryID) REFERENCES Countries(CountryID));", connection))
                 {
                     command.ExecuteNonQuery();
                 }
 
                 using (SQLiteCommand command = new SQLiteCommand(
-                    "CREATE TABLE IF NOT EXISTS Places (PlaceID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL UNIQUE, CityID INTEGER, CategoryID INTEGER, Description TEXT, Image BLOB, FOREIGN KEY (CityID) REFERENCES Cities(CityID), FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID));", connection))
+                    "CREATE TABLE IF NOT EXISTS Places (PlaceID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, CityID INTEGER, CategoryID INTEGER, Description TEXT, Image BLOB, FOREIGN KEY (CityID) REFERENCES Cities(CityID), FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID));", connection))
                 {
                     command.ExecuteNonQuery();
                 }
@@ -115,34 +120,125 @@ namespace BCSH2SemestralniPraceCermakPetr.Models.Services
 
             return result;
         }
-        public void UpdateData(string tableName, Dictionary<string, object> data, string condition, Dictionary<string, object> parameters = null)
+        public void UpdateData<T>(T item)
         {
+            Type itemType = typeof(T);
+
+            string tableName = itemType.GetCustomAttributes(typeof(TableAttribute), true)
+                                       .OfType<TableAttribute>()
+                                       .FirstOrDefault()?.Name ?? itemType.Name;
+            if (tableName == null)
+            {
+                return;
+            }
+
+            PropertyInfo? idProperty = itemType.GetProperties()
+                                              .FirstOrDefault(p => Attribute.IsDefined(p, typeof(KeyAttribute)));
+
+            if (idProperty == null)
+            {
+                throw new InvalidOperationException("No property with KeyAttribute found.");
+            }
+
+            // Get the ID value
+            object? idValue = idProperty.GetValue(item);
+
+            if (idValue == null)
+            {
+                throw new InvalidOperationException("ID property value is null.");
+            }
+
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
 
-                string updateColumns = string.Join(", ", data.Keys.Select(k => k + " = @" + k));
-                string conditionClause = string.IsNullOrWhiteSpace(condition) ? "" : $" WHERE {condition}";
-
-                using (SQLiteCommand command = new SQLiteCommand($"UPDATE {tableName} SET {updateColumns}{conditionClause};", connection))
+                using (SQLiteTransaction transaction = connection.BeginTransaction())
                 {
-                    foreach (var kvp in data)
+                    try
                     {
-                        command.Parameters.AddWithValue("@" + kvp.Key, kvp.Value);
-                    }
+                        List<PropertyInfo> propertiesToUpdate = itemType.GetProperties()
+                            .Where(p => Attribute.IsDefined(p, typeof(ColumnAttribute)) && !Attribute.IsDefined(p, typeof(KeyAttribute)))
+                            .ToList();
 
-                    if (parameters != null)
-                    {
-                        foreach (var kvp in parameters)
+                        // Generate the SET clause for the update statement
+                        string setClause = string.Join(", ",
+                            propertiesToUpdate.Select(p => $"{GetColumnName(p)} = @{GetColumnName(p)}"));
+
+                        // Generate the WHERE clause for the update statement
+                        string conditionClause = $"WHERE {GetColumnName(idProperty)} = @{GetColumnName(idProperty)}";
+
+                        // Combine clauses to form the complete update statement
+                        string updateStatement = $"UPDATE {tableName} SET {setClause} {conditionClause};";
+
+                        using (SQLiteCommand command = new SQLiteCommand(updateStatement, connection))
                         {
-                            command.Parameters.AddWithValue("@" + kvp.Key, kvp.Value);
-                        }
-                    }
+                            // Set parameters for the update statement
+                            foreach (PropertyInfo property in propertiesToUpdate)
+                            {
+                                object? value = property.GetValue(item);
 
-                    command.ExecuteNonQuery();
+                                // Handling of special types
+                                if (property.PropertyType == typeof(Bitmap) && value != null)
+                                {
+                                    // Convert Bitmap to byte array (assuming your database expects a byte array)
+                                    value = ConvertBitmapToByteArray((Bitmap)value);
+                                }
+                                else if (property.PropertyType.IsEnum && value != null)
+                                {
+                                    if (property.PropertyType == typeof(Category))
+                                    {
+                                        // Convert Category enum to int
+                                        value = (int)value;
+                                    }
+                                    else
+                                    {
+                                        // Convert enum value to its description
+                                        value = ConvertEnumToDescription(value);
+                                    }
+                                }
+                                command.Parameters.AddWithValue($"@{GetColumnName(property)}", value);
+                            }
+                            command.Parameters.AddWithValue($"@{GetColumnName(idProperty)}", idValue);
+
+                            // Execute the update statement
+                            command.ExecuteNonQuery();
+                        }
+
+                        // Commit the transaction if everything is successful
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback the transaction in case of an error
+                        transaction.Rollback();
+                        throw new InvalidOperationException("Error updating data.", ex);
+                    }
                 }
             }
         }
+        // Helper method to Get name of the column specified in ColumnAttribute
+        private string GetColumnName(PropertyInfo property)
+        {
+            var columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
+            return columnAttribute?.Name ?? property.Name;
+        }
+        // Helper method to convert Bitmap to byte array
+        private byte[] ConvertBitmapToByteArray(Bitmap bitmap)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                bitmap.Save(stream);
+                return stream.ToArray();
+            }
+        }
+        // Helper method to convert enum to its description
+        private string ConvertEnumToDescription(object enumValue)
+        {
+            EnumDescriptionConverter converter = new EnumDescriptionConverter();
+            return (string)converter.Convert(enumValue, typeof(string), null, CultureInfo.CurrentCulture);
+        }
+
+
         public void DeleteData<T>(T item)
         {
             Type itemType = typeof(T);

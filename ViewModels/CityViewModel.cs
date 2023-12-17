@@ -81,5 +81,22 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         {
             Parent?.RemoveCity(city);
         }
+        public override void UpdatePlace(Place place) // Changes the place, it needs to check if the place was found or not based on Id
+        {
+            int index = Places.IndexOf(Places.FirstOrDefault(p => p.Id == place.Id));
+
+            if (index != -1)
+            {
+                Places[index] = place;
+                this.RaisePropertyChanged(nameof(Places));
+            }
+            Parent?.UpdatePlace(place);
+        }
+        public override void UpdateCity(City city) // Changes the city
+        {
+            ShowingCity = city;
+            this.RaisePropertyChanged(nameof(ShowingCity));
+            Parent?.UpdateCity(city);
+        }
     }
 }

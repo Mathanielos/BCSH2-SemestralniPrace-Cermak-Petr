@@ -50,6 +50,22 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
 
             Parent?.RemoveCity(city);
         }
+        public override void UpdateCity(City city) // Changes the city based on Id
+        {
+            int index = Cities.IndexOf(Cities.FirstOrDefault(c => c.Id == city.Id));
 
+            if (index != -1)
+            {
+                Cities[index] = city;
+                this.RaisePropertyChanged(nameof(Cities));
+            }
+            Parent?.UpdateCity(city);
+        }
+        public override void UpdateCountry(Country country) // Changes the country
+        {
+            ShowingCountry = country;
+            this.RaisePropertyChanged(nameof(ShowingCountry));
+            Parent?.UpdateCountry(country);
+        }
     }
 }

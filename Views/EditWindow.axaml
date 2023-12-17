@@ -1,0 +1,79 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="435" d:DesignHeight="400"
+		MinWidth="435" MinHeight="450"
+		MaxWidth="435" MaxHeight="450"
+        xmlns:local="clr-namespace:BCSH2SemestralniPraceCermakPetr.Models.Converters"
+        x:Class="BCSH2SemestralniPraceCermakPetr.Views.EditWindow"
+        Title="Editace">
+
+	<Window.Resources>
+		<local:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+		<local:FirstTwoWordsConverter x:Key="FirstTwoWordsConverter" />
+		<local:RemainingTextConverter x:Key="RemainingTextConverter" />
+
+
+	</Window.Resources>
+	<Window.Styles>
+		<Style Selector="TextBlock">
+			<Setter Property="Margin" Value="5"/>
+			<Setter Property="TextWrapping" Value="Wrap"/>
+			<Setter Property="FontFamily" Value="/Assets/Fonts/Merienda.ttf#Merienda"/>
+		</Style>
+		<!-- Style for TextBoxes -->
+		<Style Selector="TextBox">
+			<Setter Property="FontFamily" Value="/Assets/Fonts/Merienda.ttf#Merienda"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="Margin" Value="5"/>
+			<Setter Property="Width" Value="300"/>
+			<Setter Property="Height" Value="25"/>
+		</Style>
+
+		<!-- Style for ComboBox -->
+		<Style Selector="ComboBox">
+			<Setter Property="FontFamily" Value="/Assets/Fonts/Merienda.ttf#Merienda"/>
+			<Setter Property="Margin" Value="5"/>
+			<Setter Property="Width" Value="300"/>
+		</Style>
+		<Style Selector="Button">
+			<Setter Property="FontFamily" Value="/Assets/Fonts/Merienda.ttf#Merienda"/>
+		</Style>
+	</Window.Styles>
+	<StackPanel>
+		<!-- Name TextBox -->
+		<TextBlock Text="Jméno:"/>
+		<TextBox Text="{Binding Name}" />
+
+		<!-- Description TextBox -->
+		<TextBlock Text="Popisek:"/>
+		<TextBox Text="{Binding Description}" />
+
+		<!-- Image FileChooser -->
+		<TextBlock Text="Obrázek:"/>
+		<StackPanel Orientation="Horizontal">
+			<TextBox Text="{Binding ImageFilePath}" IsReadOnly="True"/>
+			<Button Content="Výběr obrázku" Command="{Binding ImageChoose}"/>
+		</StackPanel>
+		<Image Source="{Binding Image}" HorizontalAlignment="Left" Width="100" Height="100" Stretch="UniformToFill" Margin="5"/>
+
+		<!-- Optional Textboxes (Initially Hidden) -->
+		<TextBlock Text="Tipy:" IsVisible="{Binding TipsVisible}"/>
+		<TextBox Text="{Binding Tips}" IsVisible="{Binding TipsVisible}"/>
+
+		<TextBlock Text="Základní informace:" IsVisible="{Binding BasicInformationVisible}"/>
+		<TextBox Text="{Binding BasicInformation}" IsVisible="{Binding BasicInformationVisible}"/>
+
+		<!-- Optional ComboBox (Initially Hidden) -->
+		<TextBlock Text="Kategorie:" IsVisible="{Binding CategoryVisible}"/>
+		<ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" IsVisible="{Binding CategoryVisible}">
+			<ComboBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
+		<Button Content="Editovat" Command="{Binding EditCommand}" HorizontalAlignment="Center" Margin="5"/>
+	</StackPanel>
+</Window>

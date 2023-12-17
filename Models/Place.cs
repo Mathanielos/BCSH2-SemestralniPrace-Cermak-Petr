@@ -14,11 +14,15 @@ namespace BCSH2SemestralniPraceCermakPetr.Models
     public class Place
     {
         [Key]
-        [Column("PlaceId")]
+        [Column("PlaceID")]
         public int Id { get; set; }
+        [Column("Name")]
         public string? Name { get; set; }
+        [Column("Description")]
         public string? Description { get; set; }
+        [Column("Image")]
         public Bitmap? Image { get; set; }
+        [Column("CategoryID")]
         public Category? Category { get; set; }
         public Place() { }
         public Place(int id, string? name, string? description, Bitmap? image, Category? category)

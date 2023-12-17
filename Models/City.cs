@@ -14,12 +14,16 @@ namespace BCSH2SemestralniPraceCermakPetr.Models
     public class City
     {
         [Key]
-        [Column("CityId")]
+        [Column("CityID")]
         public int Id { get; set; }
+        [Column("Name")]
         public string Name { get; set; }
+        [Column("Description")]
         public string Description { get; set; }
+        [Column("BasicInformation")]
         public string BasicInformation { get; set; }
         public List<Place> Places { get; set; }
+        [Column("Image")]
         public Bitmap Image { get; set; }
 
         public City(int id, string name, string description, string basicInformation, List<Place> places, Bitmap image)

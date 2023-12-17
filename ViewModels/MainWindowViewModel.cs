@@ -8,12 +8,15 @@ using System.IO;
 using System.Reactive;
 using System.ComponentModel;
 using Avalonia.Media.Imaging;
+using BCSH2SemestralniPraceCermakPetr.Views;
+using System.Threading.Tasks;
 
 namespace BCSH2SemestralniPraceCermakPetr.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly DatabaseService databaseService;
+        private readonly DialogService dialogService;
         private ViewModelBase content;
         private Stack<ViewModelBase> viewStack; // A stack to keep track of the views
         public ReactiveCommand<CountryName, Unit> ShowCountryCommand { get; } //This and next 2 commands are here so views can be easily switched without issues.
@@ -24,10 +27,18 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         public ReactiveCommand<Unit, Unit> InsertCommand { get; } // Insert button in the menu at the top
         public ReactiveCommand<Unit, Unit> EditCommand { get; } // Edit button in the menu at the top
         public ReactiveCommand<Unit, Unit> DeleteCommand { get; } // Delete button in the menu at the top
+        public ReactiveCommand<Unit, Unit> SelectCommand { get; } // Select button in the menu at the top
         public ReactiveCommand<object, Unit> EditDataCommand { get; } // Editation of the object
         public ReactiveCommand<object, Unit> DeleteDataCommand { get; } // Deletion of the object
+
+        // Visibility of editing and deleting buttons
         private bool isEditButtonVisible;
         private bool isDeleteButtonVisible;
+
+        // Changing between editing/deleting or selecting
+        private bool isNotEditing;
+        private bool isNotDeleting;
+        private bool isNotSelecting;
 
         public bool IsEditButtonVisible
         {
@@ -38,6 +49,21 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         {
             get => isDeleteButtonVisible;
             set => this.RaiseAndSetIfChanged(ref isDeleteButtonVisible, value);
+        }
+        public bool IsNotEditing
+        {
+            get => isNotEditing;
+            set => this.RaiseAndSetIfChanged(ref isNotEditing, value);
+        }
+        public bool IsNotDeleting
+        {
+            get => isNotDeleting;
+            set => this.RaiseAndSetIfChanged(ref isNotDeleting, value);
+        }
+        public bool IsNotSelecting
+        {
+            get => isNotSelecting;
+            set => this.RaiseAndSetIfChanged(ref isNotSelecting, value);
         }
 
         public MainWindowViewModel()
@@ -52,14 +78,19 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             InsertCommand = ReactiveCommand.Create(Insert);
             EditCommand = ReactiveCommand.Create(Edit);
             DeleteCommand = ReactiveCommand.Create(Delete);
+            SelectCommand = ReactiveCommand.Create(Select);
             EditDataCommand = ReactiveCommand.Create<object>(EditData);
             DeleteDataCommand = ReactiveCommand.Create<object>(DeleteData);
             var appDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var dbPath = Path.Combine(appDirectory, "Assets/TipsToTravelChanges.db");
             databaseService = new DatabaseService(dbPath);
             databaseService.InitializeDatabase();
+            dialogService = new DialogService();
             IsEditButtonVisible = false;
             IsDeleteButtonVisible = false;
+            IsNotEditing = true;
+            IsNotDeleting = true;
+            IsNotSelecting = false;
         }
         public ViewModelBase Content
         {
@@ -170,25 +201,56 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         {
             IsEditButtonVisible = true;
             IsDeleteButtonVisible = false;
+
+            IsNotSelecting = true;
+            IsNotEditing = false;
+            IsNotDeleting = true;
         }
         private void Delete()
         {
             IsEditButtonVisible = false;
             IsDeleteButtonVisible = true;
+
+            IsNotSelecting = true;
+            IsNotEditing = true;
+            IsNotDeleting = false;
         }
-        private void EditData(object parameter)
+        private void Select()
         {
+            IsEditButtonVisible = false;
+            IsDeleteButtonVisible = false;
+
+            IsNotSelecting = false;
+            IsNotEditing = true;
+            IsNotDeleting = true;
+        }
+        private async void EditData(object parameter)
+        {
+            EditWindowViewModel editWindow;
             if (parameter is Place place)
             {
 
+                editWindow = new EditWindowViewModel(place, dialogService);
+                await ShowEditWindow(editWindow);
+                Place updatedPlace = (Place)editWindow.UpdatingObject;
+                databaseService.UpdateData(updatedPlace);
+                Content?.UpdatePlace(updatedPlace);
             }
             else if (parameter is Country country)
             {
-
+                editWindow = new EditWindowViewModel(country, dialogService);
+                await ShowEditWindow(editWindow);
+                Country updatedCountry = (Country)editWindow.UpdatingObject;
+                databaseService.UpdateData(updatedCountry);
+                Content?.UpdateCountry(updatedCountry);
             }
             else if (parameter is City city)
             {
-
+                editWindow = new EditWindowViewModel(city, dialogService);
+                await ShowEditWindow(editWindow);
+                City updatedCity = (City)editWindow.UpdatingObject;
+                databaseService.UpdateData(updatedCity);
+                Content?.UpdateCity(updatedCity);
             }
         }
         private void DeleteData(object parameter)
@@ -203,7 +265,6 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                     ReturnBack();
                 }
             }
-
             else if (parameter is Country country)
             {
                 databaseService.DeleteData(country);
@@ -219,6 +280,10 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                     ReturnBack();
                 }
             }
+        }
+        private async Task ShowEditWindow<T>(T viewModel) where T : ViewModelBase
+        {
+            await dialogService.ShowEditWindow(viewModel);
         }
         private string GetDescription(CountryName countryName)
         {

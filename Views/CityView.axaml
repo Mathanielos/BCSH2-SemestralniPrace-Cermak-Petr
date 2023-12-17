@@ -36,7 +36,6 @@
 					<TextBlock Text="&#10;Základní informace" Classes="h2" />
 					<TextBlock Text="{Binding ShowingCity.BasicInformation}" Margin="50,0,0,0" Classes="paragraph" />
 				</StackPanel>
-				<!-- Use an ItemsControl with a UniformGrid for the places -->
 				<ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="250" Margin="0,10,0,0">
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
