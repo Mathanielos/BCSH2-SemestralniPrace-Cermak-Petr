@@ -7,7 +7,8 @@
 		MaxWidth="435" MaxHeight="455"
         xmlns:local="clr-namespace:BCSH2SemestralniPraceCermakPetr.Models.Converters"
         x:Class="BCSH2SemestralniPraceCermakPetr.Views.InsertEditWindow"
-        Title="Editace/Vkládání">
+        Title="Editace/Vkládání"
+		CanResize="False">
 
 	<Window.Resources>
 		<local:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />

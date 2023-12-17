@@ -73,7 +73,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             get => usageName;
             set => this.RaiseAndSetIfChanged(ref usageName, value);
         }
-        public Category[] Categories => (Category[])Enum.GetValues(typeof(Category));
+        public Category[] Categories => ((Category[])Enum.GetValues(typeof(Category))).Skip(1).ToArray();
         public Category SelectedCategory
         {
             get => selectedCategory;
@@ -124,7 +124,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                 }
                 else if (parameter is Country country)
                 {
-                    Name = ConvertEnumToDescription(country.Name);
+                    Name = country.Name;
                     Description = country.Description;
                     Image = country.Image;
                     Tips = country.Tips;
@@ -234,12 +234,6 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         private void OnInsertOrEditCompleted()
         {
             InsertOrEditCompleted?.Invoke(this, EventArgs.Empty);
-        }
-        // Helper method to convert enum to its description
-        private string ConvertEnumToDescription(object enumValue)
-        {
-            EnumDescriptionConverter converter = new EnumDescriptionConverter();
-            return (string)converter.Convert(enumValue, typeof(string), null, CultureInfo.CurrentCulture);
         }
         private async Task ShowValidationWindow<T>(T viewModel) where T : ViewModelBase
         {

@@ -11,6 +11,7 @@ using Avalonia.Media.Imaging;
 using BCSH2SemestralniPraceCermakPetr.Views;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Xml.Linq;
 
 namespace BCSH2SemestralniPraceCermakPetr.ViewModels
 {
@@ -205,8 +206,15 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                 insertEditWindow = new InsertEditWindowViewModel(newCity, dialogService, false);
                 await ShowInsertEditWindow(insertEditWindow);
                 newCity = (City)insertEditWindow.UpdatingObject;
-                newCity.Id = databaseService.InsertData(newCity, insertingToCountryId);
-                Content?.InsertCity(newCity, insertingToCountryId);
+                if (string.IsNullOrWhiteSpace(newCity.Name))
+                {
+                    return;
+                }
+                else
+                {
+                    newCity.Id = databaseService.InsertData(newCity, insertingToCountryId);
+                    Content?.InsertCity(newCity, insertingToCountryId);
+                }
             }
 
             // If specific city is showing then insert will be new place to the city
@@ -217,8 +225,15 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                 insertEditWindow = new InsertEditWindowViewModel(newPlace, dialogService, false);
                 await ShowInsertEditWindow(insertEditWindow);
                 newPlace = (Place)insertEditWindow.UpdatingObject;
-                newPlace.Id = databaseService.InsertData(newPlace, insertingToCityId);
-                Content?.InsertPlace(newPlace, insertingToCityId);
+                if (string.IsNullOrWhiteSpace(newPlace.Name))
+                {
+                    return;
+                }
+                else
+                {
+                    newPlace.Id = databaseService.InsertData(newPlace, insertingToCityId);
+                    Content?.InsertPlace(newPlace, insertingToCityId);
+                }
             }
 
         }
