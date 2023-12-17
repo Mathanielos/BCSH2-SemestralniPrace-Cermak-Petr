@@ -59,6 +59,9 @@
 		<Setter Property="Width" Value="35"/>
 		<Setter Property="Margin" Value="0 0 20 0"/>
 	</Style>
+	<Style Selector="Button.ButtonChange">
+		<Setter Property="Foreground" Value="Red"/>
+	</Style>
 
 	<Style Selector="Button:pointerover /template/ ContentPresenter">
 		<Setter Property="Background" Value="Transparent"/>

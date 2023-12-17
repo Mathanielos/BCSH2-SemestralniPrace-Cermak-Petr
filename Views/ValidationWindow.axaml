@@ -1,0 +1,20 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="260"
+		MinWidth="300" MinHeight="260"
+		MaxWidth="300" MaxHeight="260"
+        x:Class="BCSH2SemestralniPraceCermakPetr.Views.ValidationWindow"
+        Title="Validace"
+		WindowStartupLocation="CenterScreen"
+		CanResize="False">
+	<Window.Styles>
+		<StyleInclude Source="/Styles/InsertEditStyle.axaml"/>
+	</Window.Styles>
+	<StackPanel Margin="10" Spacing="10">
+		<TextBlock Margin="0 20 0 0" Height="180" Text="{Binding Message}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+		<Button Command="{Binding ExitCommand}" Content="OK" HorizontalAlignment="Center"/>
+	</StackPanel>
+</Window>

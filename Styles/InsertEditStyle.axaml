@@ -1,0 +1,32 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Design.PreviewWith>
+		<Border Padding="20">
+			<!-- Add Controls for Previewer Here -->
+		</Border>
+	</Design.PreviewWith>
+
+	<Style Selector="TextBlock">
+		<Setter Property="Margin" Value="5"/>
+		<Setter Property="TextWrapping" Value="Wrap"/>
+		<Setter Property="FontFamily" Value="/Assets/Fonts/Merienda.ttf#Merienda"/>
+	</Style>
+	<!-- Style for TextBoxes -->
+	<Style Selector="TextBox">
+		<Setter Property="FontFamily" Value="/Assets/Fonts/Merienda.ttf#Merienda"/>
+		<Setter Property="HorizontalAlignment" Value="Left"/>
+		<Setter Property="Margin" Value="5"/>
+		<Setter Property="Width" Value="300"/>
+		<Setter Property="Height" Value="25"/>
+	</Style>
+
+	<!-- Style for ComboBox -->
+	<Style Selector="ComboBox">
+		<Setter Property="FontFamily" Value="/Assets/Fonts/Merienda.ttf#Merienda"/>
+		<Setter Property="Margin" Value="5"/>
+		<Setter Property="Width" Value="300"/>
+	</Style>
+	<Style Selector="Button">
+		<Setter Property="FontFamily" Value="/Assets/Fonts/Merienda.ttf#Merienda"/>
+	</Style>
+</Styles>

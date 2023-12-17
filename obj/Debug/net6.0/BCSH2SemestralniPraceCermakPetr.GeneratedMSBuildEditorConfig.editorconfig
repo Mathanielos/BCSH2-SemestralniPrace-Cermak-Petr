@@ -21,6 +21,9 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 [C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Styles/CountryCityStyle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Styles/InsertEditStyle.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Styles/MainStyle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
@@ -30,7 +33,7 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 [C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Views/CountryView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Views/EditWindow.axaml]
+[C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Views/InsertEditWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Views/MainView.axaml]
@@ -46,4 +49,7 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Views/ToolTemplateViewWithoutInsert.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Users/petrc/Documents/GitHub/BCSH2-SemestralniPrace-Cermak-Petr/Views/ValidationWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

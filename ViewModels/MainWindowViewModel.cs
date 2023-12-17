@@ -10,6 +10,7 @@ using System.ComponentModel;
 using Avalonia.Media.Imaging;
 using BCSH2SemestralniPraceCermakPetr.Views;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace BCSH2SemestralniPraceCermakPetr.ViewModels
 {
@@ -19,7 +20,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         private readonly DialogService dialogService;
         private ViewModelBase content;
         private Stack<ViewModelBase> viewStack; // A stack to keep track of the views
-        public ReactiveCommand<CountryName, Unit> ShowCountryCommand { get; } //This and next 2 commands are here so views can be easily switched without issues.
+        public ReactiveCommand<string, Unit> ShowCountryCommand { get; } //This and next 2 commands are here so views can be easily switched without issues.
         public ReactiveCommand<City, Unit> ShowCityCommand { get; }
         public ReactiveCommand<Place, Unit> ShowPlaceCommand { get; }
         public ReactiveCommand<Unit, Unit> ReturnBackCommand { get; }
@@ -70,7 +71,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         {
             content = new MainViewModel();
             viewStack = new Stack<ViewModelBase>();
-            ShowCountryCommand = ReactiveCommand.Create<CountryName>(ShowCountry);
+            ShowCountryCommand = ReactiveCommand.Create<string>(ShowCountry);
             ShowCityCommand = ReactiveCommand.Create<City>(ShowCity);
             ShowPlaceCommand = ReactiveCommand.Create<Place>(ShowPlace);
             ReturnBackCommand = ReactiveCommand.Create(ReturnBack);
@@ -97,12 +98,11 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             get => content;
             private set => this.RaiseAndSetIfChanged(ref content, value);
         }
-        private void ShowCountry(CountryName countryName)
+        private void ShowCountry(string countryName)
         {
-            string name = GetDescription(countryName);
 
             // Fetch data for the specific country from the database
-            List<Dictionary<string, object>> countryData = databaseService.GetData("Countries", null, "Name = @Name", new Dictionary<string, object> { { "Name", name } });
+            List<Dictionary<string, object>> countryData = databaseService.GetData("Countries", null, "Name = @Name", new Dictionary<string, object> { { "Name", countryName } });
 
             if (countryData.Count > 0)
             {
@@ -193,8 +193,33 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             Content = new MainViewModel();
             viewStack.Clear();
         }
-        private void Insert()
+        private async void Insert()
         {
+            InsertEditWindowViewModel insertEditWindow;
+
+            // If specific country is showing then insert will be new city to the country
+            if (Content is CountryViewModel countryViewModel)
+            {
+                int insertingToCountryId = countryViewModel.ShowingCountry[0].Id;
+                City newCity = new City();
+                insertEditWindow = new InsertEditWindowViewModel(newCity, dialogService, false);
+                await ShowInsertEditWindow(insertEditWindow);
+                newCity = (City)insertEditWindow.UpdatingObject;
+                newCity.Id = databaseService.InsertData(newCity, insertingToCountryId);
+                Content?.InsertCity(newCity, insertingToCountryId);
+            }
+
+            // If specific city is showing then insert will be new place to the city
+            else if (Content is CityViewModel cityViewModel)
+            {
+                int insertingToCityId = cityViewModel.ShowingCity[0].Id;
+                Place newPlace = new Place();
+                insertEditWindow = new InsertEditWindowViewModel(newPlace, dialogService, false);
+                await ShowInsertEditWindow(insertEditWindow);
+                newPlace = (Place)insertEditWindow.UpdatingObject;
+                newPlace.Id = databaseService.InsertData(newPlace, insertingToCityId);
+                Content?.InsertPlace(newPlace, insertingToCityId);
+            }
 
         }
         private void Edit()
@@ -226,29 +251,29 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         }
         private async void EditData(object parameter)
         {
-            EditWindowViewModel editWindow;
+            InsertEditWindowViewModel insertEditWindow;
             if (parameter is Place place)
             {
 
-                editWindow = new EditWindowViewModel(place, dialogService);
-                await ShowEditWindow(editWindow);
-                Place updatedPlace = (Place)editWindow.UpdatingObject;
+                insertEditWindow = new InsertEditWindowViewModel(place, dialogService, true);
+                await ShowInsertEditWindow(insertEditWindow);
+                Place updatedPlace = (Place)insertEditWindow.UpdatingObject;
                 databaseService.UpdateData(updatedPlace);
                 Content?.UpdatePlace(updatedPlace);
             }
             else if (parameter is Country country)
             {
-                editWindow = new EditWindowViewModel(country, dialogService);
-                await ShowEditWindow(editWindow);
-                Country updatedCountry = (Country)editWindow.UpdatingObject;
+                insertEditWindow = new InsertEditWindowViewModel(country, dialogService, true);
+                await ShowInsertEditWindow(insertEditWindow);
+                Country updatedCountry = (Country)insertEditWindow.UpdatingObject;
                 databaseService.UpdateData(updatedCountry);
                 Content?.UpdateCountry(updatedCountry);
             }
             else if (parameter is City city)
             {
-                editWindow = new EditWindowViewModel(city, dialogService);
-                await ShowEditWindow(editWindow);
-                City updatedCity = (City)editWindow.UpdatingObject;
+                insertEditWindow = new InsertEditWindowViewModel(city, dialogService, true);
+                await ShowInsertEditWindow(insertEditWindow);
+                City updatedCity = (City)insertEditWindow.UpdatingObject;
                 databaseService.UpdateData(updatedCity);
                 Content?.UpdateCity(updatedCity);
             }
@@ -281,21 +306,9 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                 }
             }
         }
-        private async Task ShowEditWindow<T>(T viewModel) where T : ViewModelBase
+        private async Task ShowInsertEditWindow<T>(T viewModel) where T : ViewModelBase
         {
-            await dialogService.ShowEditWindow(viewModel);
-        }
-        private string GetDescription(CountryName countryName)
-        {
-            var fieldInfo = countryName.GetType().GetField(countryName.ToString());
-            var descriptionAttribute = (DescriptionAttribute)Attribute.GetCustomAttribute(fieldInfo, typeof(DescriptionAttribute));
-
-            if (descriptionAttribute != null)
-            {
-                return descriptionAttribute.Description;
-            }
-
-            return countryName.ToString(); // Fallback to enum value if no description is found
+            await dialogService.ShowInsertEditWindow(viewModel);
         }
         private Bitmap? ConvertByteArrayToBitmap(byte[] byteArray) // Convert from Byte array to Avalonia Bitmap, so it can be displayed properly
         {

@@ -33,17 +33,30 @@ namespace BCSH2SemestralniPraceCermakPetr.Models.Services
             }
             return path;
         }
-        public async Task ShowEditWindow<T>(T viewModel) where T : ViewModelBase
+        public async Task ShowInsertEditWindow<T>(T viewModel) where T : ViewModelBase
         {
             if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
                 && desktop.MainWindow is not null)
             {
-                var editWindow = new EditWindow
+                var editWindow = new InsertEditWindow
                 {
                     DataContext = viewModel,
                 };
 
                 await editWindow.ShowDialog(desktop.MainWindow);
+            }
+        }
+        public async Task ShowValidationWindow<T>(T viewModel) where T : ViewModelBase
+        {
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+                && desktop.MainWindow is not null)
+            {
+                var validationWindow = new ValidationWindow
+                {
+                    DataContext = viewModel,
+                };
+
+                await validationWindow.ShowDialog(desktop.MainWindow);
             }
         }
 

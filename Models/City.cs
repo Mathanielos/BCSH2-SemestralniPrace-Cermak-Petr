@@ -25,7 +25,9 @@ namespace BCSH2SemestralniPraceCermakPetr.Models
         public List<Place> Places { get; set; }
         [Column("Image")]
         public Bitmap Image { get; set; }
-
+        public City()
+        {
+        }
         public City(int id, string name, string description, string basicInformation, List<Place> places, Bitmap image)
         {
             Id = id;

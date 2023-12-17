@@ -18,24 +18,27 @@
 	</UserControl.Styles>
 
 	<Grid>
-		<Image Classes="BackgroundImage" Source="{Binding ShowingCity.Image}">
+		<Image Classes="BackgroundImage" Source="{Binding Image}">
 		</Image>
 		<controls:ToolTemplateView VerticalAlignment="Top"></controls:ToolTemplateView>
 		<ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0, 40, 0, 0">
+
 			<StackPanel>
-				<StackPanel Classes="Information">
-					<TextBlock Text="{Binding ShowingCity.Name, Converter={StaticResource EnumDescriptionConverter}}" Classes="Title"/>
-					<Button IsVisible="{Binding $parent[Window].DataContext.IsEditButtonVisible}" Command="{Binding $parent[Window].DataContext.EditDataCommand}" CommandParameter="{Binding ShowingCity}" VerticalAlignment="Center" HorizontalAlignment="Center">
-						<TextBlock Text="Editovat město" />
-					</Button>
-					<Button IsVisible="{Binding $parent[Window].DataContext.IsDeleteButtonVisible}" Command="{Binding $parent[Window].DataContext.DeleteDataCommand}" CommandParameter="{Binding ShowingCity}" VerticalAlignment="Center" HorizontalAlignment="Center">
-						<TextBlock Text="Smazat město" />
-					</Button>
-					<TextBlock Text="{Binding ShowingCity.Description, Converter={StaticResource FirstTwoWordsConverter}}" Classes="h2"/>
-					<TextBlock Text="{Binding ShowingCity.Description, Converter={StaticResource RemainingTextConverter}}" Margin="50,0,0,0" Classes="paragraph"/>
-					<TextBlock Text="&#10;Základní informace" Classes="h2" />
-					<TextBlock Text="{Binding ShowingCity.BasicInformation}" Margin="50,0,0,0" Classes="paragraph" />
-				</StackPanel>
+				<ItemsControl ItemsSource="{Binding ShowingCity}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Classes="Information">
+								<TextBlock Text="{Binding Name, Converter={StaticResource EnumDescriptionConverter}}" Classes="Title"/>
+								<Button Content="Editovat město" IsVisible="{Binding $parent[Window].DataContext.IsEditButtonVisible}" Command="{Binding $parent[Window].DataContext.EditDataCommand}" CommandParameter="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" Classes="ButtonChange"/>
+								<Button Content="Smazat město" IsVisible="{Binding $parent[Window].DataContext.IsDeleteButtonVisible}" Command="{Binding $parent[Window].DataContext.DeleteDataCommand}" CommandParameter="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" Classes="ButtonChange"/>
+								<TextBlock Text="{Binding Description, Converter={StaticResource FirstTwoWordsConverter}}" Classes="h2"/>
+								<TextBlock Text="{Binding Description, Converter={StaticResource RemainingTextConverter}}" Margin="50,0,0,0" Classes="paragraph"/>
+								<TextBlock Text="&#10;Základní informace" Classes="h2" />
+								<TextBlock Text="{Binding BasicInformation}" Margin="50,0,0,0" Classes="paragraph" />
+							</StackPanel>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
 				<ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="250" Margin="0,10,0,0">
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
@@ -56,12 +59,8 @@
 									<StackPanel>
 										<Grid>
 											<Image Source="{Binding Image}" Classes="ItemImage"/>
-											<Button IsVisible="{Binding $parent[Window].DataContext.IsEditButtonVisible}" Command="{Binding $parent[Window].DataContext.EditDataCommand}" CommandParameter="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center">
-												<TextBlock Text="Editovat místo" />
-											</Button>
-											<Button IsVisible="{Binding $parent[Window].DataContext.IsDeleteButtonVisible}" Command="{Binding $parent[Window].DataContext.DeleteDataCommand}" CommandParameter="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center">
-												<TextBlock Text="Smazat místo" />
-											</Button>
+											<Button Content="Editovat místo" IsVisible="{Binding $parent[Window].DataContext.IsEditButtonVisible}" Command="{Binding $parent[Window].DataContext.EditDataCommand}" CommandParameter="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" Classes="ButtonChange"/>
+											<Button Content="Smazat místo" IsVisible="{Binding $parent[Window].DataContext.IsDeleteButtonVisible}" Command="{Binding $parent[Window].DataContext.DeleteDataCommand}" CommandParameter="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" Classes="ButtonChange"/>
 										</Grid>
 										<TextBlock Text="{Binding Name}" Classes="h2"/>
 										<TextBlock Text="{Binding Description}" Classes="paragraph"/>
@@ -72,6 +71,7 @@
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
 			</StackPanel>
+
 		</ScrollViewer>
 	</Grid>
 </UserControl>

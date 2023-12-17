@@ -10,30 +10,23 @@
 	<UserControl.Styles>
 		<StyleInclude Source="/Styles/CountryCityStyle.axaml"/>
 	</UserControl.Styles>
-
-	<ScrollViewer VerticalScrollBarVisibility="Auto">
-		<Grid>
-			<Image Classes="BackgroundImage" Source="{Binding ShowingPlace.Image}">
-			</Image>
-
-			<StackPanel>
-				<controls:ToolTemplateViewWithoutInsert></controls:ToolTemplateViewWithoutInsert>
-				<StackPanel>
-					<StackPanel.Children>
+	<Grid>
+		<Image Classes="BackgroundImage" Source="{Binding Image}"/>
+		<controls:ToolTemplateViewWithoutInsert VerticalAlignment="Top"></controls:ToolTemplateViewWithoutInsert>
+		<ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0, 40, 0, 0">
+			<ItemsControl ItemsSource="{Binding ShowingPlace}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
 						<StackPanel Classes="Item" MaxWidth="600" Cursor="Arrow">
-							<TextBlock Text="{Binding ShowingPlace.Name}" Classes="Title"/>
-							<Button IsVisible="{Binding $parent[Window].DataContext.IsEditButtonVisible}" Command="{Binding $parent[Window].DataContext.EditDataCommand}" CommandParameter="{Binding ShowingPlace}" VerticalAlignment="Center" HorizontalAlignment="Center">
-								<TextBlock Text="Editovat místo" />
-							</Button>
-							<Button IsVisible="{Binding $parent[Window].DataContext.IsDeleteButtonVisible}" Command="{Binding $parent[Window].DataContext.DeleteDataCommand}" CommandParameter="{Binding ShowingPlace}" VerticalAlignment="Center" HorizontalAlignment="Center">
-								<TextBlock Text="Smazat místo" />
-							</Button>
-							<Image Source="{Binding ShowingPlace.Image}" Classes="ItemImage" />
-							<TextBlock Text="{Binding ShowingPlace.Description}" Classes="paragraph" />
+							<TextBlock Text="{Binding Name}" Classes="Title"/>
+							<Button Content="Editovat místo" IsVisible="{Binding $parent[Window].DataContext.IsEditButtonVisible}" Command="{Binding $parent[Window].DataContext.EditDataCommand}" CommandParameter="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" Classes="ButtonChange"/>
+							<Button Content="Smazat místo" IsVisible="{Binding $parent[Window].DataContext.IsDeleteButtonVisible}" Command="{Binding $parent[Window].DataContext.DeleteDataCommand}" CommandParameter="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" Classes="ButtonChange"/>
+							<Image Source="{Binding Image}" Classes="ItemImage" />
+							<TextBlock Text="{Binding Description}" Classes="paragraph" />
 						</StackPanel>
-					</StackPanel.Children>
-				</StackPanel>
-			</StackPanel>
-		</Grid>
-	</ScrollViewer>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+	</Grid>
 </UserControl>

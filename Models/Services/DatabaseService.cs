@@ -64,23 +64,112 @@ namespace BCSH2SemestralniPraceCermakPetr.Models.Services
         }
 
 
-        public void InsertData(string tableName, Dictionary<string, object> data)
+        public int InsertData<T>(T item, int? parentId = null)
         {
+            Type itemType = typeof(T);
+
+            string tableName = itemType.GetCustomAttributes(typeof(TableAttribute), true)
+                                       .OfType<TableAttribute>()
+                                       .FirstOrDefault()?.Name ?? itemType.Name;
+            if (tableName == null)
+            {
+                throw new InvalidOperationException("Table name not found.");
+            }
+
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
 
-                using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO {tableName} ({string.Join(", ", data.Keys)}) VALUES ({string.Join(", ", data.Keys.Select(k => "@" + k))});", connection))
+                using (SQLiteTransaction transaction = connection.BeginTransaction())
                 {
-                    foreach (var kvp in data)
+                    try
                     {
-                        command.Parameters.AddWithValue("@" + kvp.Key, kvp.Value);
-                    }
+                        List<PropertyInfo> propertiesToInsert = itemType.GetProperties()
+                            .Where(p => Attribute.IsDefined(p, typeof(ColumnAttribute)) && !Attribute.IsDefined(p, typeof(KeyAttribute)))
+                            .ToList();
 
-                    command.ExecuteNonQuery();
+                        // Generate the column names and values for the insert statement
+                        string columns = string.Join(", ", propertiesToInsert.Select(p => GetColumnName(p)));
+                        string values = string.Join(", ", propertiesToInsert.Select(p => $"@{GetColumnName(p)}"));
+
+                        // Determine the foreign key column based on the type
+                        string foreignKeyColumn = "";
+                        if (itemType == typeof(Place))
+                        {
+                            foreignKeyColumn = "CityID";
+                        }
+                        else if (itemType == typeof(City))
+                        {
+                            foreignKeyColumn = "CountryID";
+                        }
+
+                        // If parentId is not null, add the foreign key column to the columns and values
+                        if (parentId.HasValue && !string.IsNullOrEmpty(foreignKeyColumn))
+                        {
+                            columns += $", {foreignKeyColumn}";
+                            values += $", @{foreignKeyColumn}";
+                        }
+
+                        // Combine columns and values to form the complete insert statement
+                        string insertStatement = $"INSERT INTO {tableName} ({columns}) VALUES ({values});";
+
+                        using (SQLiteCommand command = new SQLiteCommand(insertStatement, connection))
+                        {
+                            // Set parameters for the insert statement
+                            foreach (PropertyInfo property in propertiesToInsert)
+                            {
+                                object? value = property.GetValue(item);
+
+                                // Handling of special types
+                                if (property.PropertyType == typeof(Bitmap) && value != null)
+                                {
+                                    // Convert Bitmap to byte array (assuming your database expects a byte array)
+                                    value = ConvertBitmapToByteArray((Bitmap)value);
+                                }
+                                else if (property.PropertyType.IsEnum && value != null)
+                                {
+                                    if (property.PropertyType == typeof(Category))
+                                    {
+                                        // Convert Category enum to int
+                                        value = (int)value;
+                                    }
+                                    else
+                                    {
+                                        // Convert enum value to its description
+                                        value = ConvertEnumToDescription(value);
+                                    }
+                                }
+                                command.Parameters.AddWithValue($"@{GetColumnName(property)}", value);
+                            }
+
+                            // If parentId is not null, set the parameter for the foreign key
+                            if (parentId.HasValue && !string.IsNullOrEmpty(foreignKeyColumn))
+                            {
+                                command.Parameters.AddWithValue($"@{foreignKeyColumn}", parentId.Value);
+                            }
+
+                            // Execute the insert statement
+                            command.ExecuteNonQuery();
+                        }
+
+                        // Get the last inserted row ID
+                        int lastInsertedId = Convert.ToInt32(connection.LastInsertRowId);
+
+                        // Commit the transaction if everything is successful
+                        transaction.Commit();
+
+                        return lastInsertedId;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback the transaction in case of an error
+                        transaction.Rollback();
+                        throw new InvalidOperationException("Error inserting data.", ex);
+                    }
                 }
             }
         }
+
 
         public List<Dictionary<string, object>> GetData(string tableName, string[] columns, string condition = null, Dictionary<string, object> parameters = null)
         {

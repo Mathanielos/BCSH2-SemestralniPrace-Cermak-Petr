@@ -1,4 +1,5 @@
-﻿using BCSH2SemestralniPraceCermakPetr.Models;
+﻿using Avalonia.Media.Imaging;
+using BCSH2SemestralniPraceCermakPetr.Models;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -12,12 +13,18 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
 {
     public class CountryViewModel : ViewModelBase
     {
-        private Country showingCountry;
+        private ObservableCollection<Country> showingCountry;
+        private Bitmap image;
         private ObservableCollection<City> cities;
-        public Country ShowingCountry
+        public ObservableCollection<Country> ShowingCountry
         {
             get => showingCountry;
             private set => this.RaiseAndSetIfChanged(ref showingCountry, value);
+        }
+        public Bitmap Image
+        {
+            get => image;
+            private set => this.RaiseAndSetIfChanged(ref image, value);
         }
         public ObservableCollection<City> Cities
         {
@@ -26,29 +33,44 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         }
         public CountryViewModel(Country country)
         {
-            ShowingCountry = country;
+            ShowingCountry = new ObservableCollection<Country>
+            {
+                country
+            };
+            Image = country.Image;
             cities = new ObservableCollection<City>(country.Cities);
         }
         public override void RemovePlace(Place place)
         {
-            // Try to find the city containing the place
-            City cityContainingPlace = ShowingCountry.Cities.FirstOrDefault(city => city.Places.Contains(place));
+            // Tries to find the city containing the place
+            City cityContainingPlace = Cities.FirstOrDefault(city => city.Places.Contains(place));
 
             if (cityContainingPlace != null && cityContainingPlace.Places.Remove(place))
             {
-                this.RaisePropertyChanged(nameof(ShowingCountry));
+                Parent?.RemovePlace(place);
             }
-
-            Parent?.RemovePlace(place);
         }
         public override void RemoveCity(City city)
         {
             if (Cities.Remove(city))
             {
-                this.RaisePropertyChanged(nameof(Cities));
+                Parent?.RemoveCity(city);
             }
+        }
+        public override void UpdatePlace(Place place) // Changes the place based on Id
+        {
+            // Tries to find the city containing the place
+            int indexCity = Cities.IndexOf(Cities.FirstOrDefault(city => city.Places.Contains(place)));
 
-            Parent?.RemoveCity(city);
+            if (indexCity != -1)
+            {
+                int indexPlace = Cities[indexCity].Places.IndexOf(Cities[indexCity].Places.FirstOrDefault(p => p.Id == place.Id));
+                if (indexPlace != -1)
+                {
+                    Cities[indexCity].Places[indexPlace] = place;
+                    Parent?.UpdatePlace(place);
+                }
+            }
         }
         public override void UpdateCity(City city) // Changes the city based on Id
         {
@@ -57,15 +79,30 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             if (index != -1)
             {
                 Cities[index] = city;
-                this.RaisePropertyChanged(nameof(Cities));
+                Parent?.UpdateCity(city);
             }
-            Parent?.UpdateCity(city);
         }
         public override void UpdateCountry(Country country) // Changes the country
         {
-            ShowingCountry = country;
-            this.RaisePropertyChanged(nameof(ShowingCountry));
+            ShowingCountry[0] = country;
+            Image = country.Image;
             Parent?.UpdateCountry(country);
+        }
+        public override void InsertPlace(Place place, int parentId) // Inserts new place
+        {
+            // Tries to find the city containing the place
+            City cityContainingPlace = ShowingCountry[0].Cities.FirstOrDefault(city => city.Id == parentId);
+
+            if (cityContainingPlace != null)
+            {
+                cityContainingPlace.Places.Add(place);
+                Parent?.InsertPlace(place, parentId);
+            }
+        }
+        public override void InsertCity(City city, int parentId) // Inserts new city
+        {
+            Cities.Add(city);
+            Parent?.InsertCity(city, parentId);
         }
     }
 }

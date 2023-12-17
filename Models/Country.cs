@@ -17,16 +17,18 @@ namespace BCSH2SemestralniPraceCermakPetr.Models
         [Column("CountryID")]
         public int Id { get; set; }
         [Column("Name")]
-        public CountryName Name { get; set; }
+        public string? Name { get; set; }
         [Column("Description")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
         [Column("Tips")]
-        public string Tips { get; set; }
-        public List<City> Cities { get; set; }
+        public string? Tips { get; set; }
+        public List<City>? Cities { get; set; }
         [Column("Image")]
-        public Bitmap Image { get; set; }
-
-        public Country(int id, CountryName name, string description, string tips, List<City> cities, Bitmap image)
+        public Bitmap? Image { get; set; }
+        public Country()
+        {
+        }
+        public Country(int id, string name, string description, string tips, List<City> cities, Bitmap image)
         {
             Id = id;
             Name = name;

@@ -6,7 +6,7 @@
 			 mc:Ignorable="d" d:DesignWidth="896" d:DesignHeight="504"
              x:Class="BCSH2SemestralniPraceCermakPetr.Views.MainView"
 	         x:DataType="vm:MainViewModel"
-			 xmlns:sys="clr-namespace:BCSH2SemestralniPraceCermakPetr.Models.Enums">
+			 xmlns:sys="clr-namespace:System;assembly=mscorlib">
 	<UserControl.Styles>
 		<StyleInclude Source="/Styles/MainStyle.axaml"/>
 	</UserControl.Styles>
@@ -22,7 +22,7 @@
 		<!-- First banner image -->
 		<Button Grid.Row="0" Command="{Binding $parent[Window].DataContext.ShowCountryCommand}">
 			<Button.CommandParameter>
-				<sys:CountryName>Spain</sys:CountryName>
+				<sys:String>Španělsko</sys:String>
 			</Button.CommandParameter>
 			<Grid Classes="banner">
 				<Image Classes="bannerImage" Source="/Assets/Images/spain.jpg"></Image>
@@ -33,7 +33,7 @@
 		<!-- Second banner image -->
 		<Button Grid.Row="1" Command="{Binding $parent[Window].DataContext.ShowCountryCommand}">
 			<Button.CommandParameter>
-				<sys:CountryName>Italy</sys:CountryName>
+				<sys:String>Itálie</sys:String>
 			</Button.CommandParameter>
 			<Grid Classes="banner">
 				<Image Classes="bannerImage" Source="/Assets/Images/italy.jpg"></Image>
@@ -44,7 +44,7 @@
 		<!-- Third banner image -->
 		<Button Grid.Row="2" Command="{Binding $parent[Window].DataContext.ShowCountryCommand}">
 			<Button.CommandParameter>
-				<sys:CountryName>Greece</sys:CountryName>
+				<sys:String>Řecko</sys:String>
 			</Button.CommandParameter>
 			<Grid Classes="banner">
 				<Image Classes="bannerImage" Source="/Assets/Images/greece.jpg"></Image>
@@ -55,7 +55,7 @@
 		<!-- Fourth banner image -->
 		<Button Grid.Row="3" Command="{Binding $parent[Window].DataContext.ShowCountryCommand}">
 			<Button.CommandParameter>
-				<sys:CountryName>Finland</sys:CountryName>
+				<sys:String>Finsko</sys:String>
 			</Button.CommandParameter>
 			<Grid Classes="banner">
 				<Image Classes="bannerImage" Source="/Assets/Images/finland.jpg"></Image>

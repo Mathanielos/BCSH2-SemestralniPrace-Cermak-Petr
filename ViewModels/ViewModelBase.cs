@@ -31,5 +31,13 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         {
 
         }
+        public virtual void InsertPlace(Place place, int parentId)
+        {
+
+        }
+        public virtual void InsertCity(City city, int parentId)
+        {
+
+        }
     }
 }

@@ -1,0 +1,55 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="435" d:DesignHeight="455"
+		MinWidth="435" MinHeight="455"
+		MaxWidth="435" MaxHeight="455"
+        xmlns:local="clr-namespace:BCSH2SemestralniPraceCermakPetr.Models.Converters"
+        x:Class="BCSH2SemestralniPraceCermakPetr.Views.InsertEditWindow"
+        Title="Editace/Vkládání">
+
+	<Window.Resources>
+		<local:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+		<local:FirstTwoWordsConverter x:Key="FirstTwoWordsConverter" />
+		<local:RemainingTextConverter x:Key="RemainingTextConverter" />
+	</Window.Resources>
+	<Window.Styles>
+		<StyleInclude Source="/Styles/InsertEditStyle.axaml"/>
+	</Window.Styles>
+	<StackPanel>
+		<!-- Name TextBox -->
+		<TextBlock Text="Jméno:"/>
+		<TextBox Text="{Binding Name}" />
+
+		<!-- Description TextBox -->
+		<TextBlock Text="Popisek:"/>
+		<TextBox Text="{Binding Description}" />
+
+		<!-- Image FileChooser -->
+		<TextBlock Text="Obrázek:"/>
+		<StackPanel Orientation="Horizontal">
+			<TextBox Text="{Binding ImageFilePath}" IsReadOnly="True"/>
+			<Button Content="Výběr obrázku" Command="{Binding ImageChoose}"/>
+		</StackPanel>
+		<Image Source="{Binding Image}" HorizontalAlignment="Left" Width="100" Height="100" Stretch="UniformToFill" Margin="5"/>
+
+		<!-- Optional Textboxes (Initially Hidden) -->
+		<TextBlock Text="Tipy:" IsVisible="{Binding TipsVisible}"/>
+		<TextBox Text="{Binding Tips}" IsVisible="{Binding TipsVisible}"/>
+
+		<TextBlock Text="Základní informace:" IsVisible="{Binding BasicInformationVisible}"/>
+		<TextBox Text="{Binding BasicInformation}" IsVisible="{Binding BasicInformationVisible}"/>
+
+		<!-- Optional ComboBox (Initially Hidden) -->
+		<TextBlock Text="Kategorie:" IsVisible="{Binding CategoryVisible}"/>
+		<ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" IsVisible="{Binding CategoryVisible}">
+			<ComboBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
+		<Button Content="{Binding UsageName}" Command="{Binding InsertEditCommand}" HorizontalAlignment="Center" Margin="5"/>
+	</StackPanel>
+</Window>

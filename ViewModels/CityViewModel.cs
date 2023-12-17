@@ -1,4 +1,5 @@
-﻿using BCSH2SemestralniPraceCermakPetr.Models;
+﻿using Avalonia.Media.Imaging;
+using BCSH2SemestralniPraceCermakPetr.Models;
 using BCSH2SemestralniPraceCermakPetr.Models.Enums;
 using DynamicData;
 using ReactiveUI;
@@ -14,14 +15,15 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
 {
     public class CityViewModel : ViewModelBase
     {
-        private City showingCity;
+        private ObservableCollection<City> showingCity;
+        private Bitmap image;
         private ObservableCollection<Place> places;
         private Category selectedCategory;
         public Category[] Categories
         {
             get
             {
-                var placeCategories = ShowingCity.Places
+                var placeCategories = ShowingCity[0].Places
                     .Where(place => place.Category.HasValue)
                     .Select(place => place.Category.Value)
                     .Distinct()
@@ -30,10 +32,15 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                 return new[] { Category.VsechnaMista }.Concat(placeCategories).ToArray();
             }
         }
-        public City ShowingCity
+        public ObservableCollection<City> ShowingCity
         {
             get => showingCity;
             private set => this.RaiseAndSetIfChanged(ref showingCity, value);
+        }
+        public Bitmap Image
+        {
+            get => image;
+            private set => this.RaiseAndSetIfChanged(ref image, value);
         }
         public Category SelectedCategory
         {
@@ -51,19 +58,23 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         }
         public CityViewModel(City city)
         {
-            ShowingCity = city;
+            ShowingCity = new ObservableCollection<City>
+            {
+                city
+            };
+            Image = city.Image;
             places = new ObservableCollection<Place>(city.Places);
         }
         private void ComboBoxSelectionChanged()
         {
             if (SelectedCategory == Category.VsechnaMista)
             {
-                Places = new ObservableCollection<Place>(ShowingCity.Places);
+                Places = new ObservableCollection<Place>(ShowingCity[0].Places);
             }
             else
             {
                 Places = new ObservableCollection<Place>(
-                    ShowingCity.Places.Where(place => place.Category == SelectedCategory)
+                    ShowingCity[0].Places.Where(place => place.Category == SelectedCategory)
                 );
             }
         }
@@ -72,10 +83,8 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         {
             if (Places.Remove(place))
             {
-                this.RaisePropertyChanged(nameof(Places));
+                Parent?.RemovePlace(place);
             }
-
-            Parent?.RemovePlace(place);
         }
         public override void RemoveCity(City city)
         {
@@ -88,15 +97,19 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             if (index != -1)
             {
                 Places[index] = place;
-                this.RaisePropertyChanged(nameof(Places));
+                Parent?.UpdatePlace(place);
             }
-            Parent?.UpdatePlace(place);
         }
         public override void UpdateCity(City city) // Changes the city
         {
-            ShowingCity = city;
-            this.RaisePropertyChanged(nameof(ShowingCity));
+            ShowingCity[0] = city;
+            Image = city.Image;
             Parent?.UpdateCity(city);
+        }
+        public override void InsertPlace(Place place, int parentId) // Inserts new place
+        {
+            Places.Add(place);
+            Parent?.InsertPlace(place, parentId);
         }
     }
 }
