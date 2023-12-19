@@ -11,6 +11,9 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="BCSH2SemestralniPraceCermakPetr"
 		WindowStartupLocation="CenterScreen"
-		Content="{Binding Content}">
+        ExtendClientAreaToDecorationsHint="True">
 
+	<Grid PointerPressed="OnPointerPressed">
+		<ContentControl Content="{Binding Content}" />
+	</Grid>
 </Window>

@@ -12,6 +12,8 @@ using BCSH2SemestralniPraceCermakPetr.Views;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Xml.Linq;
+using System.Linq;
+using System.Collections;
 
 namespace BCSH2SemestralniPraceCermakPetr.ViewModels
 {
@@ -21,7 +23,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         private readonly DialogService dialogService;
         private ViewModelBase content;
         private Stack<ViewModelBase> viewStack; // A stack to keep track of the views
-        public ReactiveCommand<string, Unit> ShowCountryCommand { get; } //This and next 2 commands are here so views can be easily switched without issues.
+        public ReactiveCommand<Country, Unit> ShowCountryCommand { get; } // This and next 2 commands are here so views can be easily switched without issues
         public ReactiveCommand<City, Unit> ShowCityCommand { get; }
         public ReactiveCommand<Place, Unit> ShowPlaceCommand { get; }
         public ReactiveCommand<Unit, Unit> ReturnBackCommand { get; }
@@ -67,26 +69,30 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             get => isNotSelecting;
             set => this.RaiseAndSetIfChanged(ref isNotSelecting, value);
         }
-
+        public ViewModelBase Content
+        {
+            get => content;
+            private set => this.RaiseAndSetIfChanged(ref content, value);
+        }
         public MainWindowViewModel()
         {
-            content = new MainViewModel();
-            viewStack = new Stack<ViewModelBase>();
-            ShowCountryCommand = ReactiveCommand.Create<string>(ShowCountry);
-            ShowCityCommand = ReactiveCommand.Create<City>(ShowCity);
-            ShowPlaceCommand = ReactiveCommand.Create<Place>(ShowPlace);
-            ReturnBackCommand = ReactiveCommand.Create(ReturnBack);
-            ReturnHomeCommand = ReactiveCommand.Create(ReturnHome);
-            InsertCommand = ReactiveCommand.Create(Insert);
-            EditCommand = ReactiveCommand.Create(Edit);
-            DeleteCommand = ReactiveCommand.Create(Delete);
-            SelectCommand = ReactiveCommand.Create(Select);
-            EditDataCommand = ReactiveCommand.Create<object>(EditData);
-            DeleteDataCommand = ReactiveCommand.Create<object>(DeleteData);
             var appDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var dbPath = Path.Combine(appDirectory, "Assets/TipsToTravelChanges.db");
             databaseService = new DatabaseService(dbPath);
             databaseService.InitializeDatabase();
+            content = new MainViewModel(databaseService);
+            viewStack = new Stack<ViewModelBase>();
+            ShowCountryCommand = ReactiveCommand.Create<Country>(ShowCountry);
+            ShowCityCommand = ReactiveCommand.Create<City>(ShowCity);
+            ShowPlaceCommand = ReactiveCommand.Create<Place>(ShowPlace);
+            ReturnBackCommand = ReactiveCommand.Create(ReturnBack);
+            ReturnHomeCommand = ReactiveCommand.Create(ReturnHome);
+            InsertCommand = ReactiveCommand.CreateFromTask(Insert);
+            EditCommand = ReactiveCommand.Create(Edit);
+            DeleteCommand = ReactiveCommand.Create(Delete);
+            SelectCommand = ReactiveCommand.Create(Select);
+            EditDataCommand = ReactiveCommand.CreateFromTask<object>(EditData);
+            DeleteDataCommand = ReactiveCommand.Create<object>(DeleteData);
             dialogService = new DialogService();
             IsEditButtonVisible = false;
             IsDeleteButtonVisible = false;
@@ -94,74 +100,13 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             IsNotDeleting = true;
             IsNotSelecting = false;
         }
-        public ViewModelBase Content
+        private void ShowCountry(Country country)
         {
-            get => content;
-            private set => this.RaiseAndSetIfChanged(ref content, value);
-        }
-        private void ShowCountry(string countryName)
-        {
+            CountryViewModel viewModel = new CountryViewModel(country);
+            viewModel.SetParent(content);
+            viewStack.Push(content);
 
-            // Fetch data for the specific country from the database
-            List<Dictionary<string, object>> countryData = databaseService.GetData("Countries", null, "Name = @Name", new Dictionary<string, object> { { "Name", countryName } });
-
-            if (countryData.Count > 0)
-            {
-                var countryAttributes = countryData[0]; // Assuming there's only one row for a specific country
-
-                // Create a Country object from the retrieved data
-                Country country = new(
-                    Convert.ToInt32(countryAttributes["CountryID"]),
-                    countryName,
-                    countryAttributes["Description"] as string,
-                    countryAttributes["Tips"] as string,
-                    new List<City>(),
-                    ConvertByteArrayToBitmap(countryAttributes["Image"] as byte[])
-                );
-
-                // Fetch city data for the specific country from the database
-                List<Dictionary<string, object>> cityData = databaseService.GetData("Cities", null, "CountryID = @CountryID", new Dictionary<string, object> { { "CountryID", countryAttributes["CountryID"] } });
-
-                foreach (var cityAttributes in cityData)
-                {
-                    // Create a City object for each city
-                    City city = new City(
-                        Convert.ToInt32(cityAttributes["CityID"]),
-                        cityAttributes["Name"] as string,
-                        cityAttributes["Description"] as string,
-                        cityAttributes["BasicInformation"] as string,
-                        new List<Place>(), // Initialize an empty list of places for the city
-                        ConvertByteArrayToBitmap(cityAttributes["Image"] as byte[])
-                    );
-
-                    // Fetch place data for the specific city from the database
-                    List<Dictionary<string, object>> placeData = databaseService.GetData("Places", null, "CityID = @CityID", new Dictionary<string, object> { { "CityID", cityAttributes["CityID"] } });
-
-                    foreach (var placeAttributes in placeData)
-                    {
-                        // Create a Place object for each place
-                        Place place = new Place(
-                            Convert.ToInt32(placeAttributes["PlaceID"]),
-                            placeAttributes["Name"] as string,
-                            placeAttributes["Description"] as string,
-                            ConvertByteArrayToBitmap(placeAttributes["Image"] as byte[]),
-                            (Category)Enum.Parse(typeof(Category), placeAttributes["CategoryID"].ToString())
-                        );
-
-                        // Add the Place object to the list of places in the City
-                        city.Places.Add(place);
-                    }
-
-                    // Add the City object to the list of cities in the Country
-                    country.Cities.Add(city);
-                }
-
-                CountryViewModel viewModel = new CountryViewModel(country);
-                viewModel.SetParent(content);
-                viewStack.Push(content);
-
-                Content = viewModel;
-            }
+            Content = viewModel;
         }
 
         private void ShowCity(City city)
@@ -191,10 +136,28 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         }
         private void ReturnHome()
         {
-            Content = new MainViewModel();
+            if (viewStack.Count > 0)
+            {
+
+                // Create a new stack with the old stack so it will be reversed
+                viewStack = new Stack<ViewModelBase>(viewStack);
+
+                // Get the bottommost element
+                ViewModelBase bottommostView = viewStack.Pop();
+
+                // Set the bottommost view as the current view
+                Content = bottommostView;
+            }
+            else
+            {
+                // If the viewStack is empty, set the Content to a new MainViewModel
+                Content = new MainViewModel(databaseService);
+            }
+
+            // Clear the viewStack
             viewStack.Clear();
         }
-        private async void Insert()
+        private async Task Insert()
         {
             InsertEditWindowViewModel insertEditWindow;
 
@@ -216,7 +179,23 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                     Content?.InsertCity(newCity, insertingToCountryId);
                 }
             }
-
+            // If in menu then insert will be new country
+            else if (Content is MainViewModel mainViewModel)
+            {
+                Country newCountry = new Country();
+                insertEditWindow = new InsertEditWindowViewModel(newCountry, dialogService, false);
+                await ShowInsertEditWindow(insertEditWindow);
+                newCountry = (Country)insertEditWindow.UpdatingObject;
+                if (string.IsNullOrWhiteSpace(newCountry.Name))
+                {
+                    return;
+                }
+                else
+                {
+                    newCountry.Id = databaseService.InsertData(newCountry);
+                    Content?.InsertCountry(newCountry);
+                }
+            }
             // If specific city is showing then insert will be new place to the city
             else if (Content is CityViewModel cityViewModel)
             {
@@ -264,7 +243,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             IsNotEditing = true;
             IsNotDeleting = true;
         }
-        private async void EditData(object parameter)
+        private async Task EditData(object parameter)
         {
             InsertEditWindowViewModel insertEditWindow;
             if (parameter is Place place)
@@ -300,7 +279,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                 databaseService.DeleteData(place);
 
                 Content?.RemovePlace(place);
-                if (Content is PlaceViewModel placeViewModel)
+                if (Content is PlaceViewModel)
                 {
                     ReturnBack();
                 }
@@ -308,14 +287,18 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             else if (parameter is Country country)
             {
                 databaseService.DeleteData(country);
-                ReturnBack();
+                Content?.RemoveCountry(country);
+                if (Content is CountryViewModel)
+                {
+                    ReturnBack();
+                }
             }
             else if (parameter is City city)
             {
                 databaseService.DeleteData(city);
 
                 Content?.RemoveCity(city);
-                if (Content is CityViewModel cityViewModel)
+                if (Content is CityViewModel)
                 {
                     ReturnBack();
                 }

@@ -8,6 +8,7 @@
         x:Class="BCSH2SemestralniPraceCermakPetr.Views.ValidationWindow"
         Title="Validace"
 		WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
 		CanResize="False">
 	<Window.Styles>
 		<StyleInclude Source="/Styles/InsertEditStyle.axaml"/>

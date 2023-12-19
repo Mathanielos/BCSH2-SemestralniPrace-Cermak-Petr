@@ -1,0 +1,59 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:BCSH2SemestralniPraceCermakPetr.Views">
+	<Design.PreviewWith>
+		<controls:ToolTemplateViewMainMenu/>
+	</Design.PreviewWith>
+
+	<Style Selector="controls|ToolTemplateViewMainMenu">
+		<!-- Set Defaults -->
+		<Setter Property="Template">
+			<ControlTemplate>
+				<StackPanel>
+					<StackPanel Orientation="Horizontal" Margin="10">
+						<Button Command="{Binding RestoreCommand}" Classes="ButtonToolTip">
+							<ToolTip.Tip>
+								<StackPanel>
+									<TextBlock Classes="tooltip">Obnovení dat</TextBlock>
+								</StackPanel>
+							</ToolTip.Tip>
+							<Image Source="/Assets/Icons/restore.ico"/>
+						</Button>
+						<Button Command="{Binding $parent[Window].DataContext.InsertCommand}" Classes="ButtonToolTip">
+							<ToolTip.Tip>
+								<StackPanel>
+									<TextBlock Classes="tooltip">Vložení</TextBlock>
+								</StackPanel>
+							</ToolTip.Tip>
+							<Image Source="/Assets/Icons/add.ico"/>
+						</Button>
+						<Button Command="{Binding $parent[Window].DataContext.SelectCommand}" IsEnabled="{Binding $parent[Window].DataContext.IsNotSelecting}" Classes="ButtonToolTip">
+							<ToolTip.Tip>
+								<StackPanel>
+									<TextBlock Classes="tooltip">Klasické zobrazení</TextBlock>
+								</StackPanel>
+							</ToolTip.Tip>
+							<Image Source="/Assets/Icons/select.ico"/>
+						</Button>
+						<Button Command="{Binding $parent[Window].DataContext.EditCommand}" IsEnabled="{Binding $parent[Window].DataContext.IsNotEditing}" Classes="ButtonToolTip">
+							<ToolTip.Tip>
+								<StackPanel>
+									<TextBlock Classes="tooltip">Úpravy</TextBlock>
+								</StackPanel>
+							</ToolTip.Tip>
+							<Image Source="/Assets/Icons/edit.ico"/>
+						</Button>
+						<Button Command="{Binding $parent[Window].DataContext.DeleteCommand}" IsEnabled="{Binding $parent[Window].DataContext.IsNotDeleting}" Classes="ButtonToolTip">
+							<ToolTip.Tip>
+								<StackPanel>
+									<TextBlock Classes="tooltip">Mazání</TextBlock>
+								</StackPanel>
+							</ToolTip.Tip>
+							<Image Source="/Assets/Icons/delete.ico"/>
+						</Button>
+					</StackPanel>
+				</StackPanel>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+</Styles>

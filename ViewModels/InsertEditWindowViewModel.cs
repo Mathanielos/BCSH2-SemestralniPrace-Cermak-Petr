@@ -107,7 +107,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         {
             UpdatingObject = parameter;
             dialogService = service;
-            InsertEditCommand = ReactiveCommand.Create(InsertOrUpdateData);
+            InsertEditCommand = ReactiveCommand.CreateFromTask(InsertOrUpdateData);
             TipsVisible = false;
             BasicInformationVisible = false;
             CategoryVisible = false;
@@ -158,7 +158,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
 
 
         }
-        public async void ImageChoose()
+        public async Task ImageChoose()
         {
             var filePath = await dialogService.ShowOpenFileDialog("Výběr obrázku");
 
@@ -179,7 +179,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
 
             }
         }
-        private async void InsertOrUpdateData()
+        private async Task InsertOrUpdateData()
         {
             try
             {

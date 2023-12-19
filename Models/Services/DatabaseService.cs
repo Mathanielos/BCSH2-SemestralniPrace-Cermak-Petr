@@ -18,6 +18,28 @@ namespace BCSH2SemestralniPraceCermakPetr.Models.Services
     {
         private string connectionString;
         private string databaseFile;
+        public string DatabaseFile
+        {
+            get
+            {
+                return databaseFile;
+            }
+            set
+            {
+                databaseFile = value;
+            }
+        }
+        public string ConnectionString
+        {
+            get
+            {
+                return connectionString;
+            }
+            set
+            {
+                connectionString = value;
+            }
+        }
         public DatabaseService(string databaseFile)
         {
             this.databaseFile = databaseFile;
@@ -42,13 +64,13 @@ namespace BCSH2SemestralniPraceCermakPetr.Models.Services
                 }
 
                 using (SQLiteCommand command = new SQLiteCommand(
-                    "CREATE TABLE IF NOT EXISTS Cities (CityID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, CountryID INTEGER, Description TEXT, BasicInformation TEXT, Image BLOB, FOREIGN KEY (CountryID) REFERENCES Countries(CountryID));", connection))
+                    "CREATE TABLE IF NOT EXISTS Cities (CityID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, CountryID INTEGER, Description TEXT, BasicInformation TEXT, Image BLOB, FOREIGN KEY (CountryID) REFERENCES Countries(CountryID) ON DELETE CASCADE);", connection))
                 {
                     command.ExecuteNonQuery();
                 }
 
                 using (SQLiteCommand command = new SQLiteCommand(
-                    "CREATE TABLE IF NOT EXISTS Places (PlaceID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, CityID INTEGER, CategoryID INTEGER, Description TEXT, Image BLOB, FOREIGN KEY (CityID) REFERENCES Cities(CityID), FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID));", connection))
+                    "CREATE TABLE IF NOT EXISTS Places (PlaceID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, CityID INTEGER, CategoryID INTEGER, Description TEXT, Image BLOB, FOREIGN KEY (CityID) REFERENCES Cities(CityID) ON DELETE CASCADE, FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID));", connection))
                 {
                     command.ExecuteNonQuery();
                 }
@@ -366,6 +388,12 @@ namespace BCSH2SemestralniPraceCermakPetr.Models.Services
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
+
+                // Enable foreign key support
+                using (SQLiteCommand pragmaCommand = new SQLiteCommand("PRAGMA foreign_keys = ON;", connection))
+                {
+                    pragmaCommand.ExecuteNonQuery();
+                }
 
                 using (SQLiteTransaction transaction = connection.BeginTransaction())
                 {

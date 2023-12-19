@@ -38,7 +38,14 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                 country
             };
             Image = country.Image;
-            cities = new ObservableCollection<City>(country.Cities);
+            if (country.Cities != null)
+            {
+                cities = new ObservableCollection<City>(country.Cities);
+            }
+            else
+            {
+                cities = new ObservableCollection<City>();
+            }
         }
         public override void RemovePlace(Place place)
         {
@@ -56,6 +63,10 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
             {
                 Parent?.RemoveCity(city);
             }
+        }
+        public override void RemoveCountry(Country country)
+        {
+            Parent?.RemoveCountry(country);
         }
         public override void UpdatePlace(Place place) // Changes the place based on Id
         {
@@ -101,6 +112,7 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         }
         public override void InsertCity(City city, int parentId) // Inserts new city
         {
+            city.Places = new List<Place>();
             Cities.Add(city);
             Parent?.InsertCity(city, parentId);
         }

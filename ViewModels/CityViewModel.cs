@@ -63,7 +63,14 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
                 city
             };
             Image = city.Image;
-            places = new ObservableCollection<Place>(city.Places);
+            if (city.Places != null)
+            {
+                places = new ObservableCollection<Place>(city.Places);
+            }
+            else
+            {
+                places = new ObservableCollection<Place>();
+            }
         }
         private void ComboBoxSelectionChanged()
         {

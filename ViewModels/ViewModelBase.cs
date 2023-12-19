@@ -19,6 +19,10 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
         {
 
         }
+        public virtual void RemoveCountry(Country country)
+        {
+
+        }
         public virtual void UpdatePlace(Place place)
         {
 
@@ -36,6 +40,10 @@ namespace BCSH2SemestralniPraceCermakPetr.ViewModels
 
         }
         public virtual void InsertCity(City city, int parentId)
+        {
+
+        }
+        public virtual void InsertCountry(Country country)
         {
 
         }

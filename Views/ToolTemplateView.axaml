@@ -9,7 +9,7 @@
 		<!-- Set Defaults -->
 		<Setter Property="Template">
 			<ControlTemplate>
-				<StackPanel Orientation="Horizontal" Margin="5">
+				<StackPanel Orientation="Horizontal" Margin="10">
 					<Button Command="{Binding $parent[Window].DataContext.ReturnHomeCommand}" Classes="ButtonToolTip">
 						<ToolTip.Tip>
 							<StackPanel>

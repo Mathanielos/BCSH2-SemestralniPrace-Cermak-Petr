@@ -2,14 +2,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:BCSH2SemestralniPraceCermakPetr.Views">
 	<Design.PreviewWith>
-		<controls:ToolTemplateView />
+		<controls:ToolTemplateViewWithoutInsert />
 	</Design.PreviewWith>
 
 	<Style Selector="controls|ToolTemplateViewWithoutInsert">
 		<!-- Set Defaults -->
 		<Setter Property="Template">
 			<ControlTemplate>
-				<StackPanel Orientation="Horizontal" Margin="5">
+				<StackPanel Orientation="Horizontal" Margin="10">
 					<Button Command="{Binding $parent[Window].DataContext.ReturnHomeCommand}" Classes="ButtonToolTip">
 						<ToolTip.Tip>
 							<StackPanel>

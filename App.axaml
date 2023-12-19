@@ -13,5 +13,6 @@
 		<FluentTheme/>
 		<StyleInclude Source="/Views/ToolTemplateView.axaml"></StyleInclude>
 		<StyleInclude Source="/Views/ToolTemplateViewWithoutInsert.axaml"></StyleInclude>
+		<StyleInclude Source="/Views/ToolTemplateViewMainMenu.axaml"></StyleInclude>
 	</Application.Styles>
 </Application>

@@ -5,62 +5,42 @@
              xmlns:vm="clr-namespace:BCSH2SemestralniPraceCermakPetr.ViewModels"
 			 mc:Ignorable="d" d:DesignWidth="896" d:DesignHeight="504"
              x:Class="BCSH2SemestralniPraceCermakPetr.Views.MainView"
+			 xmlns:controls="clr-namespace:BCSH2SemestralniPraceCermakPetr.Views"
 	         x:DataType="vm:MainViewModel"
 			 xmlns:sys="clr-namespace:System;assembly=mscorlib">
 	<UserControl.Styles>
 		<StyleInclude Source="/Styles/MainStyle.axaml"/>
 	</UserControl.Styles>
-	<Grid>
-		<!-- Row for each banner image -->
+	<Grid Background="#333333">
 		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
-		<!-- First banner image -->
-		<Button Grid.Row="0" Command="{Binding $parent[Window].DataContext.ShowCountryCommand}">
-			<Button.CommandParameter>
-				<sys:String>Španělsko</sys:String>
-			</Button.CommandParameter>
-			<Grid Classes="banner">
-				<Image Classes="bannerImage" Source="/Assets/Images/spain.jpg"></Image>
-				<TextBlock Classes="h1" Text="Španělsko"/>
-			</Grid>
-		</Button>
+		<controls:ToolTemplateViewMainMenu Grid.Row="0" VerticalAlignment="Top"/>
 
-		<!-- Second banner image -->
-		<Button Grid.Row="1" Command="{Binding $parent[Window].DataContext.ShowCountryCommand}">
-			<Button.CommandParameter>
-				<sys:String>Itálie</sys:String>
-			</Button.CommandParameter>
-			<Grid Classes="banner">
-				<Image Classes="bannerImage" Source="/Assets/Images/italy.jpg"></Image>
-				<TextBlock Classes="h1" Text="Itálie"/>
-			</Grid>
-		</Button>
-
-		<!-- Third banner image -->
-		<Button Grid.Row="2" Command="{Binding $parent[Window].DataContext.ShowCountryCommand}">
-			<Button.CommandParameter>
-				<sys:String>Řecko</sys:String>
-			</Button.CommandParameter>
-			<Grid Classes="banner">
-				<Image Classes="bannerImage" Source="/Assets/Images/greece.jpg"></Image>
-				<TextBlock Classes="h1" Text="Řecko"/>
-			</Grid>
-		</Button>
-
-		<!-- Fourth banner image -->
-		<Button Grid.Row="3" Command="{Binding $parent[Window].DataContext.ShowCountryCommand}">
-			<Button.CommandParameter>
-				<sys:String>Finsko</sys:String>
-			</Button.CommandParameter>
-			<Grid Classes="banner">
-				<Image Classes="bannerImage" Source="/Assets/Images/finland.jpg"></Image>
-				<TextBlock Classes="h1" Text="Finsko"/>
-			</Grid>
-		</Button>
+		<!-- Use an ItemsControl to dynamically create buttons for each country -->
+		<ItemsControl Grid.Row="1" ItemsSource="{Binding Countries}">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<UniformGrid Columns="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<Button Command="{Binding $parent[Window].DataContext.ShowCountryCommand}"
+							CommandParameter="{Binding}">
+						<Grid Classes="banner">
+							<Image Classes="bannerImage" Source="{Binding Image}"/>
+							<StackPanel>
+								<TextBlock Classes="h1" Text="{Binding Name}"/>
+								<Button Content="Editovat zemi" IsVisible="{Binding $parent[Window].DataContext.IsEditButtonVisible}" Command="{Binding $parent[Window].DataContext.EditDataCommand}" CommandParameter="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" Classes="ButtonChange"/>
+								<Button Content="Smazat zemi" IsVisible="{Binding $parent[Window].DataContext.IsDeleteButtonVisible}" Command="{Binding $parent[Window].DataContext.DeleteDataCommand}" CommandParameter="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" Classes="ButtonChange"/>
+							</StackPanel>
+						</Grid>
+					</Button>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
 	</Grid>
 </UserControl>
